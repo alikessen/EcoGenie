@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from modules.diet_module import getDietData, calculateDietFootprint
 from modules.energy_module import getEnergyData, calculateEnergyFootprint
-from modules.transportation import getTransportationData, calculateTransportFootprint
+from modules.transportation import getTransportData, calculateTransportFootprint
 from modules.recommendation_module import generateLogicalRecommendations
 
 app = Flask(__name__, static_folder="static")  # Ensure static folder is accessible
@@ -62,29 +62,25 @@ def energy():
 @app.route('/transportation', methods=['GET', 'POST'])
 def transportation():
     if request.method == 'POST':
-        distance_to_work = float(request.form.get('distance_to_work', '0') or 0)
-        mode_of_transport = request.form.get('mode_of_transport', '')  
-        work_type = request.form.get('work_type', '')
-        leisure_mode = request.form.get('leisure_mode', '')
-        leisure_type = request.form.get('leisure_type', '')
+        print("Form Data Received:", request.form)  # Debugging output
 
-        # Compute total distance assuming a 5-day work week
-        total_distance = distance_to_work * 2 * 5  # Round-trip, 5 times a week
-
-        user_data['transportation'] = {
-            "mode_of_transport": mode_of_transport, 
-            "work_mode": mode_of_transport,  
-            "distance_to_work": distance_to_work,
-            "total_distance": total_distance,
-            "work_type": work_type,
-            "leisure_mode": leisure_mode,
-            "leisure_type": leisure_type
-        }
+        try:
+            user_data['transportation'] = {
+                "work_distance_km": float(request.form.get("work_distance_km", 0)),  # Fix: Use .get()
+                "work_days": int(request.form.get("work_days", 0)),
+                "work_mode": request.form.get("work_mode", ""),
+                "work_type": request.form.get("work_type", ""),
+            }
+        except ValueError as e:
+            print("Error converting input:", e)  # Debugging output
+            return render_template('transportation.html', error="Invalid input. Please enter numbers only.")
 
         print("Transportation Data Stored:", user_data['transportation'])  # Debugging output
+
         return redirect(url_for('recommendations'))
 
     return render_template('transportation.html')
+
 
 # Generate Recommendations 
 @app.route('/recommendations')

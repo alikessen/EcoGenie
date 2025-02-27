@@ -1,152 +1,89 @@
-def getTransportationData():
+from modules.carbon_data import carbon_data
+
+def getTransportData():
+    """Collects user input for transportation habits and returns a structured dictionary."""
     print("Transportation Details:\n")
 
     while True:
-        # Ask if the user is working
-        working = input("Are you working? (yes/no): ").strip().lower()
+        working = input("Do you commute to work/school? (yes/no): ").strip().lower()
         if working in ["yes", "no"]:
             break
         print("Invalid input. Please type 'yes' or 'no'.")
 
-    total_travel_days = 0
-    total_distance = 0
-    transport_mode = None
-    travel_type = None
+    work_distance_km = 0
+    work_days = 0
+    work_mode = None
+    work_type = None
 
-    # Collect Work Travel Data
     if working == "yes":
         while True:
             try:
-                distance_to_work = float(input("Enter the one-way distance between your home and work (in kilometers): ").strip())
-                if distance_to_work >= 0:
+                work_distance_km = float(input("How many kilometers is your one-way commute? (0-100): ").strip())
+                if 0 <= work_distance_km <= 100:
                     break
-                print("Distance cannot be negative. Please enter a valid distance.")
+                print("Invalid input. Please enter a number between 0 and 100.")
             except ValueError:
                 print("Invalid input. Please enter a numeric value.")
 
         while True:
             try:
-                work_days = int(input("How many days do you commute to work in a typical week? (1-7): ").strip())
+                work_days = int(input("How many days per week do you commute? (1-7): ").strip())
                 if 1 <= work_days <= 7:
                     break
-                print("Invalid input. Please enter a numeric value between 1 and 7.")
+                print("Invalid input. Please enter a number between 1 and 7.")
             except ValueError:
                 print("Invalid input. Please enter a numeric value.")
 
         while True:
-            transport_mode = input("How do you go to work? (walk/cycle/public transport/car): ").strip().lower()
-            if transport_mode in ["walk", "cycle", "public transport", "car"]:
-                if transport_mode == "public transport":
-                    while True:
-                        travel_type = input("Do you use a bus, tube, or both? (bus/tube/both): ").strip().lower()
-                        if travel_type in ["bus", "tube", "both"]:
-                            break
-                        print("Invalid input. Please type 'bus', 'tube', or 'both'.")
-                elif transport_mode == "car":
-                    while True:
-                        travel_type = input("What type of car do you drive? (petrol/diesel/electric): ").strip().lower()
-                        if travel_type in ["petrol", "diesel", "electric"]:
-                            break
-                        print("Invalid input. Please type 'petrol', 'diesel', or 'electric'.")
+            work_mode = input("How do you commute? (walk/cycle/public transport/car): ").strip().lower()
+            if work_mode in ["walk", "cycle", "public transport", "car"]:
                 break
             print("Invalid input. Please type 'walk', 'cycle', 'public transport', or 'car'.")
 
-        total_travel_days += work_days
-        total_distance += distance_to_work * 2 * work_days  # Round-trip travel
-
-    # Collect Leisure (Non-Work) Travel Data
-    while True:
-        try:
-            leisure_days = int(input("How many additional days per week do you travel for errands, shopping, or social activities? (0-7): ").strip())
-            if 0 <= leisure_days <= 7:
-                break
-            print("Invalid input. Please enter a number between 0 and 7.")
-        except ValueError:
-            print("Invalid input. Please enter a numeric value.")
-
-    if leisure_days > 0:
-        while True:
-            try:
-                leisure_distance = float(input("On average, how many kilometers do you travel per day for these activities? ").strip())
-                if leisure_distance >= 0:
+        if work_mode == "car":
+            while True:
+                work_type = input("What type of car do you drive? (petrol/diesel/electric): ").strip().lower()
+                if work_type in ["petrol", "diesel", "electric"]:
                     break
-                print("Distance cannot be negative. Please enter a valid distance.")
-            except ValueError:
-                print("Invalid input. Please enter a numeric value.")
+                print("Invalid input. Please type 'petrol', 'diesel', or 'electric'.")
 
-        while True:
-            leisure_mode = input("How do you usually travel for these activities? (walk/cycle/public transport/car): ").strip().lower()
-            if leisure_mode in ["walk", "cycle", "public transport", "car"]:
-                if leisure_mode == "public transport":
-                    while True:
-                        leisure_type = input("Do you use a bus, tube, or both? (bus/tube/both): ").strip().lower()
-                        if leisure_type in ["bus", "tube", "both"]:
-                            break
-                        print("Invalid input. Please type 'bus', 'tube', or 'both'.")
-                elif leisure_mode == "car":
-                    while True:
-                        leisure_type = input("What type of car do you drive? (petrol/diesel/electric): ").strip().lower()
-                        if leisure_type in ["petrol", "diesel", "electric"]:
-                            break
-                        print("Invalid input. Please type 'petrol', 'diesel', or 'electric'.")
-                break
-            print("Invalid input. Please type 'walk', 'cycle', 'public transport', or 'car'.")
+        if work_mode == "public transport":
+            while True:
+                work_type = input("What public transport do you use? (bus/tube/both): ").strip().lower()
+                if work_type in ["bus", "tube", "both"]:
+                    break
+                print("Invalid input. Please type 'bus', 'tube', or 'both'.")
 
-        total_travel_days += leisure_days
-        total_distance += leisure_distance * leisure_days  # Total weekly distance
 
     return {
-        "working": working,
-        "total_travel_days": total_travel_days,
-        "total_distance": total_distance,
-        "work_mode": transport_mode,
-        "work_type": travel_type,
-        "leisure_mode": leisure_mode if leisure_days > 0 else None,
-        "leisure_type": leisure_type if leisure_days > 0 else None,
+        "work_distance_km": work_distance_km,
+        "work_days": work_days,
+        "work_mode": work_mode,
+        "work_type": work_type,
     }
 
-
-def calculateTransportFootprint(transportation_data):
-    carbon_data = {
-        "car_types": {
-            "petrol": 0.165,  
-            "diesel": 0.17,
-            "electric": 0.0,  
-        },
-        "public_transport": {
-            "bus": 0.075,  
-            "tube": 0.025,
-        },
-    }
-
+def calculateTransportFootprint(transport_data):
+    """Calculates the transport-related carbon footprint using values from CSV."""
     footprint = 0.0
-    total_distance = transportation_data.get("total_distance", 0)  
+    total_distance = transport_data["work_distance_km"] * transport_data["work_days"]  # Remove *2
 
-    # Calculate emissions from work travel
-    if transportation_data.get("work_mode") == "car":
-        footprint += total_distance * carbon_data["car_types"].get(transportation_data.get("work_type", ""), 0)
-    elif transportation_data.get("work_mode") == "public transport":
-        if transportation_data.get("work_type") == "bus":
-            footprint += total_distance * carbon_data["public_transport"]["bus"]
-        elif transportation_data.get("work_type") == "tube":
-            footprint += total_distance * carbon_data["public_transport"]["tube"]
-        elif transportation_data.get("work_type") == "both":
-            footprint += total_distance * ((carbon_data["public_transport"]["bus"] + carbon_data["public_transport"]["tube"]) / 2)
+    if transport_data["work_mode"] == "car":
+        car_type = transport_data["work_type"]
+        footprint += total_distance * carbon_data["transport"].get(f"car_{car_type}", 0.15)  # Default 0.15 kg CO2/km
 
-    # Calculate emissions from leisure travel
-    leisure_mode = transportation_data.get("leisure_mode", "") 
-    leisure_type = transportation_data.get("leisure_type", "")
-
-    if leisure_mode == "car":
-        footprint += total_distance * carbon_data["car_types"].get(leisure_type, 0)
-    elif leisure_mode == "public transport":
-        if leisure_type == "bus":
-            footprint += total_distance * carbon_data["public_transport"]["bus"]
-        elif leisure_type == "tube":
-            footprint += total_distance * carbon_data["public_transport"]["tube"]
-        elif leisure_type == "both":
-            footprint += total_distance * ((carbon_data["public_transport"]["bus"] + carbon_data["public_transport"]["tube"]) / 2)
+    elif transport_data["work_mode"] == "public transport":
+        transport_type = transport_data["work_type"]
+        if transport_type in ["bus", "tube", "both"]:
+            footprint += total_distance * carbon_data["transport"].get(transport_type, 0.05)  # Default 0.05 kg CO2/km
 
     return footprint
 
 
+if __name__ == "__main__":
+    sample_data = {
+        "work_distance_km": 10,
+        "work_days": 5,
+        "work_mode": "car",
+        "work_type": "petrol"
+    }
+    print("Transport Carbon Footprint:", calculateTransportFootprint(sample_data))

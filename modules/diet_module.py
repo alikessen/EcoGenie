@@ -1,4 +1,7 @@
+from modules.carbon_data import carbon_data
+
 def getDietData():
+    """Collects user input for diet habits and returns a structured dictionary."""
     print("Diet Details:\n")
 
     while True:
@@ -68,7 +71,7 @@ def getDietData():
 
         while True:
             try:
-                chicken_per_kg = float(input("How many kilograms of chichken do you consume in a week? (0 to 10): ").strip())
+                chicken_per_kg = float(input("How many kilograms of chicken do you consume in a week? (0 to 10): ").strip())
                 if 0 <= chicken_per_kg <= 10:
                     break
                 print("Invalid input. Please enter a number between 0 and 10.")
@@ -113,7 +116,7 @@ def getDietData():
 
         return {
             "diet_type": "neither",
-            "vegan_meals_per_week": vegetarian_meals_per_week,  # Assuming plant-based meals are vegetarian/vegan
+            "vegan_meals_per_week": vegetarian_meals_per_week,
             "beef_per_kg": beef_per_kg,
             "chicken_per_kg": chicken_per_kg,
             "fish_per_kg": fish_per_kg,
@@ -121,60 +124,26 @@ def getDietData():
             "eggs_per_week": eggs_per_week,
         }
 
-
 def calculateDietFootprint(diet_data):
-    # Carbon emission factors (kg CO2 per unit)
-    carbon_data = {
-        "meat": {
-            "beef": 40.0,      # kg CO2 per kg of beef
-            "chicken": 8.0,    # kg CO2 per kg of chicken
-            "fish": 4.0,       # kg CO2 per kg of fish/seafood
-        },
-        "dairy_and_eggs": {
-            "milk": 1.25,       # kg CO2 per liter of milk
-            "eggs": 2.2 / 12,  # kg CO2 per egg (4.8 per dozen eggs)
-        },
-        "plant_based": {
-            "vegetarian_meal": 1.8,  # kg CO2 per vegetarian meal
-            "vegan_meal": 1.9,       # kg CO2 per vegan meal
-        }
-    }
-
-    # Initialize footprint
+    """Calculates the diet-related carbon footprint using values from CSV."""
     footprint = 0.0
 
-    # Calculate footprint based on diet type
-    if diet_data["diet_type"] == "vegan":
-        vegan_meals_per_week = diet_data["vegan_meals_per_week"]
-        footprint += vegan_meals_per_week * carbon_data["plant_based"]["vegan_meal"]
-
-    elif diet_data["diet_type"] == "vegetarian":
-        milk_footprint = diet_data["milk_liters_per_week"] * carbon_data["dairy_and_eggs"]["milk"]
-        eggs_footprint = diet_data["eggs_per_week"] * carbon_data["dairy_and_eggs"]["eggs"]
-        vegetarian_footprint = diet_data["vegan_meals_per_week"] * carbon_data["plant_based"]["vegetarian_meal"]
-        footprint += milk_footprint + eggs_footprint + vegetarian_footprint
-
-    elif diet_data["diet_type"] == "neither":
-        # Calculate meat footprints
-        beef_footprint = diet_data["beef_per_kg"] * carbon_data["meat"]["beef"]
-        chicken_footprint = diet_data["chicken_per_kg"] * carbon_data["meat"]["chicken"]
-        fish_footprint = diet_data["fish_per_kg"] * carbon_data["meat"]["fish"]
-
-        # Remaining meals are assumed to be vegetarian
-        vegetarian_footprint = diet_data["vegan_meals_per_week"] * carbon_data["plant_based"]["vegetarian_meal"]
-
-        # Calculate dairy and egg footprints
-        milk_footprint = diet_data["milk_liters_per_week"] * carbon_data["dairy_and_eggs"]["milk"]
-        eggs_footprint = diet_data["eggs_per_week"] * carbon_data["dairy_and_eggs"]["eggs"]
-
-        # Sum up the total footprint
-        footprint += (
-            beef_footprint
-            + chicken_footprint
-            + fish_footprint
-            + vegetarian_footprint
-            + milk_footprint
-            + eggs_footprint
-        )
+    # Retrieve emission factors dynamically from CSV data
+    footprint += diet_data["beef_per_kg"] * carbon_data["diet"]["beef"]
+    footprint += diet_data["chicken_per_kg"] * carbon_data["diet"]["chicken"]
+    footprint += diet_data["fish_per_kg"] * carbon_data["diet"]["fish"]
+    footprint += diet_data["milk_liters_per_week"] * carbon_data["diet"].get("milk", 1.25)  # Default factor if missing
+    footprint += diet_data["eggs_per_week"] * carbon_data["diet"].get("eggs", 2.2 / 12)  # Per egg factor
 
     return footprint
+
+# Debugging: Run a test case when executing this script directly
+if __name__ == "__main__":
+    sample_diet = {
+        "beef_per_kg": 2.0,
+        "chicken_per_kg": 1.5,
+        "fish_per_kg": 1.0,
+        "milk_liters_per_week": 3,
+        "eggs_per_week": 6
+    }
+    print("Diet Carbon Footprint:", calculateDietFootprint(sample_diet))
