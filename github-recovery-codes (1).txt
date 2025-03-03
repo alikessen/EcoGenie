@@ -1,16 +1,19 @@
-cccae-3e7e2
-3fbdb-e3f6e
-64691-5d448
-c0107-75738
-d3594-c2b6c
-81afc-1c861
-157a6-8e6ca
-42e77-db89f
-99838-50ce1
-82ac3-5d7cd
-09c14-65de3
-8c192-1d8eb
-3e32d-2f955
-7b461-ef0b4
-b536a-2217e
-ffdc8-8acdb
+# Generate Recommendations 
+@app.route('/recommendations')
+def recommendations():
+    if not user_data:
+        return redirect(url_for('index'))
+    
+    diet_footprint = calculateDietFootprint(user_data['diet'])
+    energy_footprint = calculateEnergyFootprint(user_data['energy'])
+    transport_footprint = calculateTransportFootprint(user_data['transportation'])
+    
+    user_footprints = {
+        "diet": diet_footprint,
+        "energy": energy_footprint,
+        "transportation": transport_footprint
+    }
+    
+    recommendations = generateLogicalRecommendations(user_data['transportation'], user_data['diet'], user_data['energy'], user_footprints)
+    
+    return render_template('recommendation.html', recommendations=recommendations)
