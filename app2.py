@@ -3,6 +3,8 @@ from modules.diet_module import getDietData, calculateDietFootprint
 from modules.energy_module import getEnergyData, calculateEnergyFootprint
 from modules.transportation import getTransportData, calculateTransportFootprint
 from modules.recommendation_module import generateLogicalRecommendations
+from modules.db import get_db_connection
+
 
 app = Flask(__name__, static_folder="static")  # Ensure static folder is accessible
 
