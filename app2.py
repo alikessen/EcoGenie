@@ -85,21 +85,34 @@ def transportation():
 # Generate Recommendations 
 @app.route('/recommendations')
 def recommendations():
-    if not user_data:
-        return redirect(url_for('index'))
-    
+    print("Current user_data contents:", user_data)  # Debugging output
+
+    if 'diet' not in user_data:
+        print("ERROR: 'diet' data is missing!")  # Debugging output
+        return redirect(url_for('diet'))  # Redirect back to diet input
+
+    if 'energy' not in user_data:
+        print("ERROR: 'energy' data is missing!")
+        return redirect(url_for('energy'))
+
+    if 'transportation' not in user_data:
+        print("ERROR: 'transportation' data is missing!")
+        return redirect(url_for('transportation'))
+
     diet_footprint = calculateDietFootprint(user_data['diet'])
     energy_footprint = calculateEnergyFootprint(user_data['energy'])
     transport_footprint = calculateTransportFootprint(user_data['transportation'])
-    
+
     user_footprints = {
         "diet": diet_footprint,
         "energy": energy_footprint,
         "transportation": transport_footprint
     }
-    
-    recommendations = generateLogicalRecommendations(user_data['transportation'], user_data['diet'], user_data['energy'], user_footprints)
-    
+
+    recommendations = generateLogicalRecommendations(
+        user_data['transportation'], user_data['diet'], user_data['energy'], user_footprints
+    )
+
     return render_template('recommendation.html', recommendations=recommendations)
 
 # Run Flask App 
