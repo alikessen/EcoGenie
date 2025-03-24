@@ -5,7 +5,7 @@ from modules.diet_module import getDietData, calculateDietFootprint
 from modules.energy_module import getEnergyData, calculateEnergyFootprint
 from modules.transportation import getTransportData, calculateTransportFootprint
 from modules.recommendation_module import generateLogicalRecommendations
-from modules.db import get_db_connection, register_user, get_user_by_username, get_user_by_id
+from modules.db import get_db_connection, register_user, get_user_by_username, get_user_by_id, save_user_input
 
 
 # Flask App
@@ -28,7 +28,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    user = get_user_by_id(user_id)  # <- FIXED: now using correct ID lookup
+    user = get_user_by_id(user_id)  
     if user:
         return User(user["id"], user["username"])
     return None
@@ -37,6 +37,7 @@ def load_user(user_id):
 @app.route('/')
 @login_required
 def index():
+    print("Logged in as:", current_user.username)
     return render_template('index.html')
 
 # Register Route
@@ -157,6 +158,16 @@ def recommendations():
         "energy": energy_footprint,
         "transportation": transport_footprint
     }
+
+    save_user_input(
+        user_id=current_user.id,
+        diet_data=session['diet'],
+        energy_data=session['energy'],
+        transport_data=session['transportation'],
+        diet_footprint=diet_footprint,
+        energy_footprint=energy_footprint,
+        transport_footprint=transport_footprint
+    )
 
     recommendations = generateLogicalRecommendations(
         session['transportation'], session['diet'], session['energy'], user_footprints

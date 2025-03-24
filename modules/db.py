@@ -1,5 +1,7 @@
 import mysql.connector
 from flask_bcrypt import Bcrypt
+import json
+
 
 bcrypt = Bcrypt()
 
@@ -54,3 +56,31 @@ def get_user_by_id(user_id):
     cursor.close()
     conn.close()
     return user
+
+
+def save_user_input(user_id, diet_data, energy_data, transport_data,
+                    diet_footprint, energy_footprint, transport_footprint):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            INSERT INTO user_inputs 
+            (user_id, diet_data, energy_data, transport_data, 
+             diet_footprint, energy_footprint, transport_footprint)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                user_id,
+                json.dumps(diet_data),
+                json.dumps(energy_data),
+                json.dumps(transport_data),
+                diet_footprint,
+                energy_footprint,
+                transport_footprint
+            )
+        )
+        conn.commit()
+    finally:
+        cursor.close()
+        conn.close()

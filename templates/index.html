@@ -54,7 +54,13 @@
         <h1>Welcome to EcoGenie</h1>
         <p>Your AI-powered sustainability assistant helps you reduce your carbon footprint by providing personalized recommendations.</p>
         <p>Answer a few questions about your lifestyle, and let EcoGenie guide you towards a greener future!</p>
-        <a href="{{ url_for('diet') }}" class="start-button">Get Started</a>
+        
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('diet') }}" class="start-button">Start</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="start-button">Get Started</a>
+        {% endif %}
+
     </div>
 </body>
 </html>
