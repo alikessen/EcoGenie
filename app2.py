@@ -5,7 +5,7 @@ from modules.diet_module import getDietData, calculateDietFootprint
 from modules.energy_module import getEnergyData, calculateEnergyFootprint
 from modules.transportation import getTransportData, calculateTransportFootprint
 from modules.recommendation_module import generateLogicalRecommendations
-from modules.db import get_db_connection, register_user, get_user_by_username, get_user_by_id, save_user_input
+from modules.db import get_db_connection, register_user, get_user_by_username, get_user_by_id, save_user_input, get_user_history
 
 
 # Flask App
@@ -174,6 +174,13 @@ def recommendations():
     )
 
     return render_template('recommendation.html', recommendations=recommendations)
+
+@app.route('/history')
+@login_required
+def history():
+    history_data = get_user_history(current_user.id)
+    return render_template("history.html", history=history_data)
+
 
 # Run Flask App
 if __name__ == '__main__':

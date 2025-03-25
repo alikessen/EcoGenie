@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My History - EcoGenie</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+        .entry { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        h2 { color: #27ae60; }
+    </style>
+</head>
+<body>
+    <h1>My Carbon Footprint History</h1>
+
+    {% if history %}
+        {% for entry in history %}
+            <div class="entry">
+                <p><strong>Date:</strong> {{ entry.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p><strong>Diet CO₂:</strong> {{ entry.diet_footprint }} kg</p>
+                <p><strong>Energy CO₂:</strong> {{ entry.energy_footprint }} kg</p>
+                <p><strong>Transport CO₂:</strong> {{ entry.transport_footprint }} kg</p>
+                <p><strong>Total:</strong> {{ entry.diet_footprint + entry.energy_footprint + entry.transport_footprint }} kg</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You have no history yet. Start by entering your lifestyle data.</p>
+    {% endif %}
+</body>
+</html>

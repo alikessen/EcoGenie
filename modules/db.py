@@ -84,3 +84,24 @@ def save_user_input(user_id, diet_data, energy_data, transport_data,
     finally:
         cursor.close()
         conn.close()
+
+
+def get_user_history(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute(
+            """
+            SELECT diet_footprint, energy_footprint, transport_footprint,
+                   timestamp
+            FROM user_inputs
+            WHERE user_id = %s
+            ORDER BY timestamp DESC
+            """,
+            (user_id,)
+        )
+        results = cursor.fetchall()
+        return results
+    finally:
+        cursor.close()
+        conn.close()
