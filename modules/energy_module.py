@@ -2,7 +2,10 @@ from modules.carbon_data import carbon_data
 
 def getEnergyData():
     """Collects user input for energy consumption and returns a structured dictionary."""
-    print("Energy Consumption Details:\n")
+    try:
+        print("Energy Consumption Details:\n")
+    except KeyError as e:
+        raise ValueError(f"Missing CO₂ data for: {e}")
 
     while True:
         try:
@@ -52,7 +55,10 @@ def getEnergyData():
 
 def calculateEnergyFootprint(energy_data):
     """Calculates the energy-related carbon footprint using values from CSV."""
-    footprint = 0.0
+    try:
+        footprint = 0.0
+    except KeyError as e:
+        raise ValueError(f"Missing CO₂ data for: {e}")
 
     # Electricity emissions based on source
     electricity_source = energy_data["electricity_source"]
@@ -60,9 +66,12 @@ def calculateEnergyFootprint(energy_data):
 
     footprint += energy_data["electricity_kwh_per_month"] * electricity_factor
 
-    # Gas heating emissions
+    # Heating type
     if energy_data["heating_type"] == "gas":
         footprint += energy_data["gas_usage_cubic_meters"] * carbon_data["energy"].get("gas", 2.0)  # Default 2.0 kg CO2/m³
+
+    elif energy_data["heating_type"] == "oil":
+        footprint += energy_data["electricity_kwh_per_month"] * carbon_data["energy"].get("oil", 0.32)  
 
     # Appliance savings: Reduce footprint if using energy-efficient appliances
     if energy_data["energy_efficient_appliances"] == "yes":

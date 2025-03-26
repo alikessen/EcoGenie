@@ -1,25 +1,43 @@
 def generateLogicalRecommendations(transportation_data, diet_data, energy_data, user_footprints):
     recommendations = []
 
-    # Prevent KeyError by using `.get()`
-    mode_of_transport = transportation_data.get("mode_of_transport", "")
-    distance_to_work = transportation_data.get("distance_to_work", 0)
-    car_type = transportation_data.get("type", "")
+    # --- Transport: Work travel ---
+    mode_of_transport = transportation_data.get("work_mode", "")
+    distance_to_work = transportation_data.get("work_distance_km", 0)
+    work_days = transportation_data.get("work_days", 0)
+    work_car_type = transportation_data.get("work_car_type", "")
+    work_pt_type = transportation_data.get("work_public_transport_type", "")
+    transport_footprint = user_footprints.get("transportation", 0)
 
-    # Transportation Recommendations
     if mode_of_transport == "car":
-        car_emissions = user_footprints.get("transportation", 0)
-
         if distance_to_work <= 5:
-            savings = car_emissions * 0.15  # Assume 15% reduction for short-distance cycling
-            recommendations.append(("Consider cycling or walking for short commutes.", savings))
+            savings = transport_footprint * 0.15
+            recommendations.append(("Consider walking or cycling to work if your commute is short.", savings))
         else:
-            savings = car_emissions * 0.70  # Assume 70% reduction for using public transport for long distances
-            recommendations.append(("Consider using tube or public buses.", savings))
+            savings = transport_footprint * 0.7
+            recommendations.append(("Switch to public transport for long commutes to reduce emissions.", savings))
 
-        if car_type in ["petrol", "diesel"]:
-            savings = car_emissions * 0.2  # Assume 20% savings for carpooling
-            recommendations.append(("Switch to carpooling or public transport to reduce emissions.", savings))
+        if work_car_type in ["petrol", "diesel"]:
+            savings = transport_footprint * 0.2
+            recommendations.append(("Switch to electric or hybrid vehicles, or carpool when possible.", savings))
+
+    elif mode_of_transport == "public transport" and work_pt_type == "bus":
+        savings = transport_footprint * 0.15
+        recommendations.append(("Try using the tube instead of the bus for faster and cleaner commutes.", savings))
+
+    # --- Transport: Leisure travel ---
+    leisure_mode = transportation_data.get("leisure_mode", "")
+    leisure_distance = transportation_data.get("leisure_distance", 0)
+    leisure_days = transportation_data.get("leisure_days", 0)
+    leisure_type = transportation_data.get("leisure_type", "")
+
+    if leisure_mode == "car" and leisure_type in ["petrol", "diesel"]:
+        savings = leisure_distance * leisure_days * 0.3  # example value
+        recommendations.append(("Reduce leisure car travel or switch to electric options.", savings))
+
+    if leisure_mode == "public transport" and leisure_type == "bus":
+        savings = leisure_distance * leisure_days * 0.2
+        recommendations.append(("Use tube instead of bus for lower emissions.", savings))
 
     # Diet Recommendations
     if diet_data.get("beef_per_kg", 0) > 1.5:

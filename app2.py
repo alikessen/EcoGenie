@@ -121,12 +121,25 @@ def energy():
 def transportation():
     if request.method == 'POST':
         try:
+            work_mode = request.form.get("work_mode", "")
+            if work_mode == "car":
+                work_type = request.form.get("work_car_type", "")
+            elif work_mode == "public transport":
+                work_type = request.form.get("work_pt_type", "")
+            else:
+                work_type = ""
+
             session["transportation"] = {
                 "work_distance_km": float(request.form.get("work_distance_km", 0)),
                 "work_days": int(request.form.get("work_days", 0)),
-                "work_mode": request.form.get("work_mode", ""),
-                "work_type": request.form.get("work_type", "")
+                "work_mode": work_mode,
+                "work_type": work_type,
+                "leisure_distance": float(request.form.get("leisure_distance", 0)),
+                "leisure_days": int(request.form.get("leisure_days", 0)),
+                "leisure_mode": request.form.get("leisure_mode", ""),
+                "leisure_type": request.form.get("leisure_type", "")
             }
+
         except ValueError as e:
             print("Error converting input:", e)
             return render_template('transportation.html', error="Invalid input. Please enter numbers only.")
