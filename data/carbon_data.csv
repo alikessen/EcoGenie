@@ -9,6 +9,9 @@ energy,electricity_non_renewable,0.5
 energy,electricity_renewable,0
 energy,electricity_mixed,0.25
 energy,gas,1.9
+energy,electric,0
+energy,oil,0.32
+energy,none,0
 transport,car_petrol,0.165
 transport,car_diesel,0.17
 transport,car_electric,0

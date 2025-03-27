@@ -1,3 +1,6 @@
+from modules.carbon_data import carbon_data
+
+
 def generateLogicalRecommendations(transportation_data, diet_data, energy_data, user_footprints):
     recommendations = []
 
@@ -41,28 +44,46 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
 
     # Diet Recommendations
     if diet_data.get("beef_per_kg", 0) > 1.5:
-        beef_savings = diet_data["beef_per_kg"] * 40.0 / 2  
+        beef_emission = carbon_data["diet"]["beef"]
+        beef_savings = (diet_data["beef_per_kg"] * 0.5) * beef_emission
         recommendations.append(("Reduce your beef consumption by 50% per week.", beef_savings))
 
     if diet_data.get("chicken_per_kg", 0) > 1:
-        chicken_savings = diet_data["chicken_per_kg"] * 8.0 / 2
+        chicken_emission = carbon_data["diet"]["chicken"]
+        chicken_savings = (diet_data["chicken_per_kg"] * 0.5) * chicken_emission
         recommendations.append(("Reduce your chicken consumption by 50% per week.", chicken_savings))
 
     if diet_data.get("fish_per_kg", 0) > 1:
-        fish_savings = diet_data["fish_per_kg"] * 4.0 / 2
+        fish_emission = carbon_data["diet"]["fish"]
+        fish_savings = (diet_data["fish_per_kg"] * 0.5) * fish_emission
         recommendations.append(("Reduce your fish consumption by 50% per week.", fish_savings))
 
     if diet_data.get("milk_liters_per_week", 0) > 2:
-        milk_savings = diet_data["milk_liters_per_week"] * 1.25 / 2
+        milk_emission = carbon_data["diet"]["milk"]
+        milk_savings = (diet_data["milk_liters_per_week"] * 0.5) * milk_emission
         recommendations.append(("Reduce your milk consumption by 50% per week.", milk_savings))
 
     if diet_data.get("eggs_per_week", 0) > 3:
-        egg_savings = 2 * (2.2 / 12)
+        egg_emission = carbon_data["diet"]["eggs"]
+        egg_savings = 2 * egg_emission  
         recommendations.append(("Reduce your egg consumption by 2 per week.", egg_savings))
 
-    if diet_data.get("vegan_meals_per_week", 0) == 0:
-        vegan_savings = 8  # Assume fixed savings for introducing vegan meals
-        recommendations.append(("Try incorporating at least 1 plant-based meal per week.", vegan_savings))
+    if diet_data.get("vegan_meals_per_week", 0) < 4:
+        avg_meal_emission = carbon_data["diet"]["average_meal"]
+        vegan_meal_emission = carbon_data["diet"]["vegan_meals"]
+        co2_saved_per_meal = avg_meal_emission - vegan_meal_emission
+        vegan_savings = co2_saved_per_meal * (4 - diet_data["vegan_meals_per_week"])
+
+        recommendations.append(("Try making your breakfasts plant-based at least 4 times per week.", vegan_savings))
+
+    elif 4 <= diet_data["vegan_meals_per_week"] < 10:
+        avg_meal_emission = carbon_data["diet"]["average_meal"]
+        vegan_meal_emission = carbon_data["diet"]["vegan_meals"]
+        co2_saved_per_meal = avg_meal_emission - vegan_meal_emission
+        needed_meals = 10 - diet_data["vegan_meals_per_week"]
+        vegan_savings = co2_saved_per_meal * needed_meals
+
+        recommendations.append((f"Try increasing your plant-based meals by {needed_meals} more per week.", vegan_savings))
 
     # Energy Recommendations
     electricity_source = energy_data.get("electricity_source", "")
