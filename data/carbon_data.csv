@@ -5,6 +5,7 @@ diet,fish,4
 diet,milk,1.25
 diet,eggs,0.183
 diet,vegan_meals,1
+diet,average_meal,3.25
 energy,electricity_non_renewable,0.5
 energy,electricity_renewable,0
 energy,electricity_mixed,0.25

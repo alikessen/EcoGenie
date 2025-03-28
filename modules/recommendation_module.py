@@ -4,46 +4,53 @@ from modules.carbon_data import carbon_data
 def generateLogicalRecommendations(transportation_data, diet_data, energy_data, user_footprints):
     recommendations = []
 
-    # --- Transport: Work travel ---
+    # Transport: Work travel
     mode_of_transport = transportation_data.get("work_mode", "")
     distance_to_work = transportation_data.get("work_distance_km", 0)
     work_days = transportation_data.get("work_days", 0)
     work_car_type = transportation_data.get("work_car_type", "")
     work_pt_type = transportation_data.get("work_public_transport_type", "")
     transport_footprint = user_footprints.get("transportation", 0)
+    total_distance_work = work_days * distance_to_work * 2
 
     if mode_of_transport == "car":
+        emission_factor = carbon_data["transport"][f"car_{work_car_type}"]
+
         if distance_to_work <= 5:
-            savings = transport_footprint * 0.15
-            recommendations.append(("Consider walking or cycling to work if your commute is short.", savings))
-        else:
-            savings = transport_footprint * 0.7
+            savings = total_distance_work * emission_factor
+            recommendations.append(("Consider walking or cycling to work.", savings))
+
+        elif distance_to_work > 5 and work_car_type != "electric":
+            savings = (total_distance_work * emission_factor) - (total_distance_work * carbon_data["transport"]["both"])
             recommendations.append(("Switch to public transport for long commutes to reduce emissions.", savings))
 
-        if work_car_type in ["petrol", "diesel"]:
-            savings = transport_footprint * 0.2
-            recommendations.append(("Switch to electric or hybrid vehicles, or carpool when possible.", savings))
-
     elif mode_of_transport == "public transport" and work_pt_type == "bus":
-        savings = transport_footprint * 0.15
-        recommendations.append(("Try using the tube instead of the bus for faster and cleaner commutes.", savings))
+        savings = (total_distance_work * carbon_data["transport"]["bus"]) - (total_distance_work * carbon_data["transport"]["tube"])
+        recommendations.append(("Switch from bus to tube if possible for faster and cleaner commutes.", savings))
 
-    # --- Transport: Leisure travel ---
+    # Transport: Leisure travel
     leisure_mode = transportation_data.get("leisure_mode", "")
     leisure_distance = transportation_data.get("leisure_distance", 0)
     leisure_days = transportation_data.get("leisure_days", 0)
     leisure_type = transportation_data.get("leisure_type", "")
+    total_distance_leisure = leisure_days * leisure_distance * 2
 
-    if leisure_mode == "car" and leisure_type in ["petrol", "diesel"]:
-        savings = leisure_distance * leisure_days * 0.3  # example value
-        recommendations.append(("Reduce leisure car travel or switch to electric options.", savings))
+    if leisure_mode == "car":
+        leisure_emission_factor = carbon_data["transport"].get(f"car_{leisure_type}", 0)
 
-    if leisure_mode == "public transport" and leisure_type == "bus":
-        savings = leisure_distance * leisure_days * 0.2
-        recommendations.append(("Use tube instead of bus for lower emissions.", savings))
+        if leisure_emission_factor > 0:
+            savings = total_distance_leisure * leisure_emission_factor / 2
+            recommendations.append(("Reduce leisure car travel by %50 per week", savings))
 
+    elif leisure_mode == "public transport" and leisure_type == "bus":
+        bus_emission_factor = carbon_data["transport"].get("bus", 0)
+        tube_emission_factor = carbon_data["transport"].get("tube", 0)
+        savings = total_distance_leisure * (bus_emission_factor - tube_emission_factor)
+        recommendations.append(("Use the tube instead of the bus for lower emissions during leisure trips.", savings))
+
+   
     # Diet Recommendations
-    if diet_data.get("beef_per_kg", 0) > 1.5:
+    if diet_data.get("beef_per_kg", 0) > 1:
         beef_emission = carbon_data["diet"]["beef"]
         beef_savings = (diet_data["beef_per_kg"] * 0.5) * beef_emission
         recommendations.append(("Reduce your beef consumption by 50% per week.", beef_savings))
@@ -63,10 +70,15 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
         milk_savings = (diet_data["milk_liters_per_week"] * 0.5) * milk_emission
         recommendations.append(("Reduce your milk consumption by 50% per week.", milk_savings))
 
-    if diet_data.get("eggs_per_week", 0) > 3:
+    if 7 > diet_data.get("eggs_per_week", 0) > 3:
         egg_emission = carbon_data["diet"]["eggs"]
         egg_savings = 2 * egg_emission  
         recommendations.append(("Reduce your egg consumption by 2 per week.", egg_savings))
+    
+    elif diet_data.get("eggs_per_week", 0) > 7:
+        egg_emission = carbon_data["diet"]["eggs"]
+        egg_savings = 3 * egg_emission  
+        recommendations.append(("Reduce your egg consumption by 3 per week.", egg_savings))
 
     if diet_data.get("vegan_meals_per_week", 0) < 4:
         avg_meal_emission = carbon_data["diet"]["average_meal"]
@@ -85,22 +97,44 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
 
         recommendations.append((f"Try increasing your plant-based meals by {needed_meals} more per week.", vegan_savings))
 
+
+
     # Energy Recommendations
     electricity_source = energy_data.get("electricity_source", "")
+    electricity_footprint = user_footprints.get("energy", 0)
+
+    # Suggest switching to renewable electricity
     if electricity_source == "no":
-        electricity_savings = user_footprints.get("energy", 0)  # Savings equal to electricity footprint if switching to renewables
-        recommendations.append(("Switch to a renewable energy provider.", electricity_savings))
+        recommendations.append((
+            "Switch to a renewable energy provider to eliminate electricity emissions.", 
+            electricity_footprint
+        ))
+
     elif electricity_source == "some":
-        electricity_savings2 = user_footprints.get("energy", 0) / 2  # Savings equal to electricity footprint if switching to renewables
-        recommendations.append(("Switch to a fully renewable energy provider.", electricity_savings2))
+        savings = electricity_footprint * 0.5
+        recommendations.append((
+            "Switch to a fully renewable energy provider to cut electricity emissions by 50%.", 
+            savings
+        ))
 
-    if energy_data.get("gas_usage_cubic_meters", 0) > 50:
-        gas_savings = user_footprints.get("energy", 0) * 0.1  # Assume 10% savings for reducing gas usage
-        recommendations.append(("Reduce gas heating usage by 10%.", gas_savings))
+    # Suggest reducing gas usage if high
+    gas_usage = energy_data.get("gas_usage_cubic_meters", 0)
+    gas_emission_factor = carbon_data["energy"]["gas"]
+    gas_footprint = gas_usage * gas_emission_factor
+    if gas_usage > 50:
+        savings = gas_footprint * 0.1  # You may later link this to actual gas footprint
+        recommendations.append((
+            "Reduce gas heating usage by 10%.", 
+            savings
+        ))
 
+    # Suggest upgrading appliances proportionally
     if energy_data.get("energy_efficient_appliances", "") == "no":
-        appliance_savings = 10  # Fixed savings for upgrading appliances
-        recommendations.append(("Upgrade to energy-efficient appliances or install LED bulbs.", appliance_savings))
+        appliance_savings = electricity_footprint * 0.15 * 0.3  # 15% of usage saved by 30%
+        recommendations.append((
+            "Upgrade to energy-efficient appliances or install LED bulbs.", 
+            appliance_savings
+        ))
 
     # Rank Recommendations by CO2 Savings
     ranked_recommendations = sorted(recommendations, key=lambda x: x[1], reverse=True)
