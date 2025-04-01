@@ -35,9 +35,11 @@ def load_user(user_id):
 
 # Home Page
 @app.route('/')
-@login_required
 def index():
-    print("Logged in as:", current_user.username)
+    if current_user.is_authenticated:
+        print("Logged in as:", current_user.username)
+    else:
+        print("Not logged in.")
     return render_template('index.html')
 
 # Register Route
@@ -76,7 +78,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("login"))
+    return redirect(url_for("index"))
 
 # Diet Page
 @app.route('/diet', methods=['GET', 'POST'])
