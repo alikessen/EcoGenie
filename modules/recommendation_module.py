@@ -142,6 +142,6 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
     # Sort by highest saving
     recommendations.sort(key=lambda x: x[1], reverse=True)
 
-    # Just return the sorted list (can be empty, that's okay!)
+    # Return the sorted list 
     return recommendations[:3]
 
