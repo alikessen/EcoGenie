@@ -123,22 +123,27 @@ def energy():
 def transportation():
     if request.method == 'POST':
         try:
-            work_mode = request.form.get("work_mode", "")
+            working = request.form.get("working", "")
+            work_distance_km = 0
+            work_days = 0
+            work_mode = ""
             work_car_type = ""
             work_pt_type = ""
-            if work_mode == "car":
-                work_car_type = request.form.get("work_car_type", "")
-                work_pt_type = ""
-            elif work_mode == "public transport":
-                work_car_type = ""
-                work_pt_type = request.form.get("work_pt_type", "")
-            else:
-                work_car_type = ""
-                work_pt_type = ""
+
+            if working == "yes":
+
+                work_mode = request.form.get("work_mode", "")
+                if work_mode == "car":
+                    work_car_type = request.form.get("work_car_type", "")
+                elif work_mode == "public transport":
+                    work_pt_type = request.form.get("work_pt_type", "")
+                work_distance_km = float(request.form.get("work_distance_km", 0))
+                work_days = int(request.form.get("work_days", 0))
 
             session["transportation"] = {
-                "work_distance_km": float(request.form.get("work_distance_km", 0)),
-                "work_days": int(request.form.get("work_days", 0)),
+                "working": working,
+                "work_distance_km": work_distance_km,
+                "work_days": work_days,
                 "work_mode": work_mode,
                 "work_car_type": work_car_type,
                 "work_pt_type": work_pt_type,
