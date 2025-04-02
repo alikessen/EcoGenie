@@ -10,6 +10,7 @@
 <body>
     <div class="form-container">
         <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
+
         <h1>Your Personalized Recommendations</h1>
         <p>Here are your top suggestions to reduce your carbon footprint:</p>
 
@@ -18,12 +19,16 @@
                 {% for rec, savings in recommendations %}
                     <div class="recommendation-card">
                         <p>{{ rec }}</p>
-                        <span class="co2-saving">CO₂ Savings: {{ savings|round(2) }} kg/week</span>
+                        <span class="co2-saving">CO₂ Savings: {{ savings | round(2) }} kg/week</span>
                     </div>
                 {% endfor %}
             </div>
         {% else %}
-            <p>No recommendations available.</p>
+            <div class="recommendation-card" style="background-color: #e8f5e9;">
+                <p style="color: green; font-weight: bold;">
+                    You are already doing great! No further recommendations at the moment.
+                </p>
+            </div>
         {% endif %}
 
         <a href="{{ url_for('index') }}" class="button">Go Back to Home</a>

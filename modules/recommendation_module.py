@@ -136,8 +136,12 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
             appliance_savings
         ))
 
-    # Rank Recommendations by CO2 Savings
-    ranked_recommendations = sorted(recommendations, key=lambda x: x[1], reverse=True)
+    # Filter out empty or zero-saving recommendations
+    recommendations = [(text, saving) for text, saving in recommendations if saving > 0]
 
-    # Return Top 3 Recommendations
-    return ranked_recommendations[:3]
+    # Sort by highest saving
+    recommendations.sort(key=lambda x: x[1], reverse=True)
+
+    # Just return the sorted list (can be empty, that's okay!)
+    return recommendations[:3]
+
