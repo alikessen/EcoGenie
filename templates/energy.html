@@ -6,74 +6,82 @@
     <script>
         function updateEnergyForm() {
             let heatingType = document.getElementById("heating_type").value;
-            
-            // Hide gas usage field unless heating type is "gas"
             document.getElementById("gas_usage_section").style.display = (heatingType === "gas") ? "block" : "none";
         }
 
         function validateForm(event) {
-            let valid = true;
             let errors = [];
-
-            // Get values
             let electricityUsage = document.getElementById("electricity_kwh_per_month").value;
             let gasUsage = document.getElementById("gas_usage_cubic_meters")?.value;
 
-            // Validation checks
-            if (electricityUsage < 0) {
-                errors.push("Electricity usage cannot be negative.");
-            }
-            if (gasUsage && gasUsage < 0) {
-                errors.push("Gas usage cannot be negative.");
-            }
+            if (electricityUsage < 0) errors.push("Electricity usage cannot be negative.");
+            if (gasUsage && gasUsage < 0) errors.push("Gas usage cannot be negative.");
 
-            // Display errors if any
             let errorBox = document.getElementById("error_messages");
             errorBox.innerHTML = "";
             if (errors.length > 0) {
-                event.preventDefault();  // Prevent form submission
+                event.preventDefault();
                 errorBox.innerHTML = "<ul><li>" + errors.join("</li><li>") + "</li></ul>";
             }
         }
     </script>
 </head>
 <body onload="updateEnergyForm()">
-    <h1>Enter Your Energy Consumption Details</h1>
 
-    <div id="error_messages" style="color: red;"></div> <!-- Error messages appear here -->
+    <div class="form-container">
 
-    <form method="POST" onsubmit="validateForm(event)">
-        <label title="How many kilowatt-hours (kWh) of electricity do you use per month?">Electricity Usage (kWh/month):</label>
-        <input type="number" id="electricity_kwh_per_month" name="electricity_kwh_per_month" step="0.1" placeholder="e.g., 350"><br>
+        <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
 
-        <label title="Is your electricity sourced from renewable energy?">Electricity Source:</label>
-        <select name="electricity_source">
-            <option value="yes">Yes (100% Renewable)</option>
-            <option value="no">No (Non-Renewable)</option>
-            <option value="some">Some (Mixed Energy Source)</option>
-        </select><br>
+        <h1>Energy Consumption</h1>
+        <p>Please provide information about your household energy usage to help EcoGenie estimate your carbon footprint.</p>
 
-        <label title="What type of heating system do you use in your home?">Heating Type:</label>
-        <select name="heating_type" id="heating_type" onchange="updateEnergyForm()">
-            <option value="gas">Gas</option>
-            <option value="electric">Electric</option>
-            <option value="oil">Oil</option>
-            <option value="none">None</option>
-        </select><br>
+        <div id="error_messages" style="color: red;"></div>
 
-        <div id="gas_usage_section" style="display: none;">
-            <label title="How many cubic meters of gas do you use per month?">Gas Usage (m³/month):</label>
-            <input type="number" id="gas_usage_cubic_meters" name="gas_usage_cubic_meters" step="0.1" placeholder="e.g., 50"><br>
-        </div>
+        <form method="POST" onsubmit="validateForm(event)" class="diet-form">
 
-        <label title="Do you use energy-efficient appliances at home?">Energy-Efficient Appliances:</label>
-        <select name="energy_efficient_appliances">
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-            <option value="some">Some</option>
-        </select><br>
+            <div class="form-group">
+                <label>Electricity Usage (kWh/month):</label>
+                <input type="number" id="electricity_kwh_per_month" name="electricity_kwh_per_month" step="0.1" placeholder="e.g., 350" required>
+            </div>
 
-        <button type="submit">Next</button>
-    </form>
+            <div class="form-group">
+                <label>Electricity Source:</label>
+                <select name="electricity_source" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="yes">Yes (100% Renewable)</option>
+                    <option value="no">No (Non-Renewable)</option>
+                    <option value="some">Some (Mixed Source)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Heating Type:</label>
+                <select name="heating_type" id="heating_type" onchange="updateEnergyForm()" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="gas">Gas</option>
+                    <option value="electric">Electric</option>
+                    <option value="oil">Oil</option>
+                    <option value="none">None</option>
+                </select>
+            </div>
+
+            <div id="gas_usage_section" class="form-group" style="display: none;">
+                <label>Gas Usage (m³/month):</label>
+                <input type="number" id="gas_usage_cubic_meters" name="gas_usage_cubic_meters" step="0.1" placeholder="e.g., 50">
+            </div>
+
+            <div class="form-group">
+                <label>Energy-Efficient Appliances:</label>
+                <select name="energy_efficient_appliances" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                    <option value="some">Some</option>
+                </select>
+            </div>
+
+            <button type="submit">Next</button>
+        </form>
+    </div>
 </body>
 </html>

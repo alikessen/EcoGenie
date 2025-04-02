@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Transportation Information</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script>
         function updateTransportForm() {
             let working = document.getElementById("working").value;
@@ -10,49 +11,28 @@
             let leisureDays = document.getElementById("leisure_days").value;
             let leisureMode = document.getElementById("leisure_mode").value;
 
-            // Work Travel - Show/hide
             document.getElementById("work_travel_section").style.display = working === "yes" ? "block" : "none";
-
-            // Mode of Transport toggle
-            document.getElementById("car_options").style.display = "none";
-            document.getElementById("public_transport_options").style.display = "none";
-            if (transportMode === "car") {
-                document.getElementById("car_options").style.display = "block";
-            } else if (transportMode === "public transport") {
-                document.getElementById("public_transport_options").style.display = "block";
-            }
-
-            // Leisure Travel toggle
+            document.getElementById("car_options").style.display = transportMode === "car" ? "block" : "none";
+            document.getElementById("public_transport_options").style.display = transportMode === "public transport" ? "block" : "none";
             document.getElementById("leisure_travel_section").style.display = leisureDays > 0 ? "block" : "none";
 
-            // Leisure type toggle
             let leisureTypeSection = document.getElementById("leisure_type_section");
             let leisureTypeSelect = document.getElementById("leisure_type");
             leisureTypeSelect.innerHTML = "";
 
             if (leisureMode === "car") {
                 leisureTypeSection.style.display = "block";
-                leisureTypeSelect.innerHTML = `
-                    <option value="petrol">Petrol</option>
-                    <option value="diesel">Diesel</option>
-                    <option value="electric">Electric</option>
-                `;
+                leisureTypeSelect.innerHTML = `<option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="electric">Electric</option>`;
             } else if (leisureMode === "public transport") {
                 leisureTypeSection.style.display = "block";
-                leisureTypeSelect.innerHTML = `
-                    <option value="bus">Bus</option>
-                    <option value="tube">Tube</option>
-                    <option value="both">Both</option>
-                `;
+                leisureTypeSelect.innerHTML = `<option value="bus">Bus</option><option value="tube">Tube</option><option value="both">Both</option>`;
             } else {
                 leisureTypeSection.style.display = "none";
             }
         }
 
         function validateForm(event) {
-            let valid = true;
             let errors = [];
-
             let working = document.getElementById("working").value;
             let leisureDays = document.getElementById("leisure_days").value;
             let distanceToWork = document.getElementById("work_distance_km")?.value;
@@ -60,18 +40,10 @@
             let leisureDistance = document.getElementById("leisure_distance")?.value;
 
             if (working === "yes") {
-                if (distanceToWork && distanceToWork < 0) {
-                    errors.push("Distance to work cannot be negative.");
-                }
-                if (workDays && (workDays < 1 || workDays > 7)) {
-                    errors.push("Work days must be between 1 and 7.");
-                }
+                if (distanceToWork < 0) errors.push("Distance to work cannot be negative.");
+                if (workDays < 1 || workDays > 7) errors.push("Work days must be between 1 and 7.");
             }
-            if (leisureDays > 0) {
-                if (leisureDistance && leisureDistance < 0) {
-                    errors.push("Leisure travel distance cannot be negative.");
-                }
-            }
+            if (leisureDays > 0 && leisureDistance < 0) errors.push("Leisure travel distance cannot be negative.");
 
             let errorBox = document.getElementById("error_messages");
             errorBox.innerHTML = "";
@@ -82,80 +54,110 @@
         }
     </script>
 </head>
+
 <body onload="updateTransportForm()">
-    <h1>Enter Your Transportation Details</h1>
-    <div id="error_messages" style="color: red;"></div>
 
-    <form method="POST" onsubmit="validateForm(event)">
-        <h2>Work Travel</h2>
+    <div class="form-container">
 
-        <label>Are you working?</label>
-        <select name="working" id="working" onchange="updateTransportForm()">
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-        </select><br>
+        <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
 
-        <div id="work_travel_section" style="display: none;">
-            <label>Distance to Work (km):</label>
-            <input type="number" id="work_distance_km" name="work_distance_km" step="0.1"><br>
+        <h1>Transportation Information</h1>
+        <p>Tell us about your daily travel routines to help EcoGenie estimate your transportation footprint.</p>
 
-            <label>Work Days per Week:</label>
-            <input type="number" id="work_days" name="work_days" min="1" max="7"><br>
+        <div id="error_messages" style="color: red;"></div>
 
-            <label>Mode of Transport:</label>
-            <select name="work_mode" id="work_mode" onchange="updateTransportForm()">
-                <option value="walk">Walk</option>
-                <option value="cycle">Cycle</option>
-                <option value="public transport">Public Transport</option>
-                <option value="car">Car</option>
-            </select><br>
+        <form method="POST" onsubmit="validateForm(event)" class="diet-form">
 
-            <div id="car_options" style="display:none;">
-                <label>Car Type:</label>
-                <select name="work_car_type">
-                    <option value="petrol">Petrol</option>
-                    <option value="diesel">Diesel</option>
-                    <option value="electric">Electric</option>
-                </select><br>
+            <h2>Work Travel</h2>
+
+            <div class="form-group">
+                <label>Are you working?</label>
+                <select name="working" id="working" onchange="updateTransportForm()" required>
+                    <option value="">Select</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
             </div>
 
-            <div id="public_transport_options" style="display:none;">
-                <label>Public Transport Type:</label>
-                <select name="work_pt_type">
-                    <option value="bus">Bus</option>
-                    <option value="tube">Tube</option>
-                    <option value="both">Both</option>
-                </select><br>
+            <div id="work_travel_section" style="display: none;">
+
+                <div class="form-group">
+                    <label>Distance to Work (km):</label>
+                    <input type="number" id="work_distance_km" name="work_distance_km" step="0.1" placeholder="e.g., 10">
+                </div>
+
+                <div class="form-group">
+                    <label>Work Days per Week:</label>
+                    <input type="number" id="work_days" name="work_days" min="1" max="7" placeholder="e.g., 5">
+                </div>
+
+                <div class="form-group">
+                    <label>Mode of Transport:</label>
+                    <select name="work_mode" id="work_mode" onchange="updateTransportForm()">
+                        <option value="">Select</option>
+                        <option value="walk">Walk</option>
+                        <option value="cycle">Cycle</option>
+                        <option value="public transport">Public Transport</option>
+                        <option value="car">Car</option>
+                    </select>
+                </div>
+
+                <div id="car_options" class="form-group" style="display:none;">
+                    <label>Car Type:</label>
+                    <select name="work_car_type">
+                        <option value="petrol">Petrol</option>
+                        <option value="diesel">Diesel</option>
+                        <option value="electric">Electric</option>
+                    </select>
+                </div>
+
+                <div id="public_transport_options" class="form-group" style="display:none;">
+                    <label>Public Transport Type:</label>
+                    <select name="work_pt_type">
+                        <option value="bus">Bus</option>
+                        <option value="tube">Tube</option>
+                        <option value="both">Both</option>
+                    </select>
+                </div>
+
             </div>
-        </div>
 
-        <h2>Leisure Travel</h2>
+            <h2>Leisure Travel</h2>
 
-        <label>Leisure Travel Days per Week:</label>
-        <input type="number" id="leisure_days" name="leisure_days" min="0" max="7" onchange="updateTransportForm()"><br>
-
-        <div id="leisure_travel_section" style="display: none;">
-            <label>Leisure Travel Distance per Trip (km):</label>
-            <input type="number" id="leisure_distance" name="leisure_distance" step="0.1"><br>
-
-            <label>Leisure Mode of Transport:</label>
-            <select name="leisure_mode" id="leisure_mode" onchange="updateTransportForm()">
-                <option value="">None</option>
-                <option value="car">Car</option>
-                <option value="public transport">Public Transport</option>
-                <option value="cycle">Cycle</option>
-                <option value="walk">Walk</option>
-            </select><br>
-
-            <div id="leisure_type_section" style="display: none;">
-                <label>Leisure Transport Type:</label>
-                <select name="leisure_type" id="leisure_type">
-                    <!-- Filled dynamically -->
-                </select><br>
+            <div class="form-group">
+                <label>Leisure Travel Days per Week:</label>
+                <input type="number" id="leisure_days" name="leisure_days" min="0" max="7" onchange="updateTransportForm()" placeholder="e.g., 2">
             </div>
-        </div>
 
-        <button type="submit">Next</button>
-    </form>
+            <div id="leisure_travel_section" style="display: none;">
+
+                <div class="form-group">
+                    <label>Leisure Travel Distance per Trip (km):</label>
+                    <input type="number" id="leisure_distance" name="leisure_distance" step="0.1" placeholder="e.g., 15">
+                </div>
+
+                <div class="form-group">
+                    <label>Leisure Mode of Transport:</label>
+                    <select name="leisure_mode" id="leisure_mode" onchange="updateTransportForm()">
+                        <option value="">Select</option>
+                        <option value="car">Car</option>
+                        <option value="public transport">Public Transport</option>
+                        <option value="cycle">Cycle</option>
+                        <option value="walk">Walk</option>
+                    </select>
+                </div>
+
+                <div id="leisure_type_section" class="form-group" style="display: none;">
+                    <label>Leisure Transport Type:</label>
+                    <select name="leisure_type" id="leisure_type"></select>
+                </div>
+
+            </div>
+
+            <button type="submit">Next</button>
+        </form>
+    </div>
+
 </body>
+
 </html>

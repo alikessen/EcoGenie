@@ -1,48 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Personalized Recommendations</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .recommendation-container {
-            width: 50%;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-        }
-        .recommendation {
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #e8f5e9;
-            border-radius: 5px;
-        }
-        .co2-saving {
-            font-weight: bold;
-            color: green;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title>EcoGenie - Recommendations</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
-    <h1>Your Personalized Sustainability Recommendations</h1>
-    <div class="recommendation-container">
+    <div class="form-container">
+        <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
+        <h1>Your Personalized Recommendations</h1>
+        <p>Here are your top suggestions to reduce your carbon footprint:</p>
+
         {% if recommendations %}
-            {% for rec, savings in recommendations %}
-                <div class="recommendation">
-                    {{ rec }} <br>
-                    <span class="co2-saving">CO₂ Savings: {{ savings|round(2) }} kg per week</span>
-                </div>
-            {% endfor %}
+            <div class="recommendations">
+                {% for rec, savings in recommendations %}
+                    <div class="recommendation-card">
+                        <p>{{ rec }}</p>
+                        <span class="co2-saving">CO₂ Savings: {{ savings|round(2) }} kg/week</span>
+                    </div>
+                {% endfor %}
+            </div>
         {% else %}
             <p>No recommendations available.</p>
         {% endif %}
-    </div>
 
-    <a href="{{ url_for('index') }}">Go Back to Home</a>
+        <a href="{{ url_for('index') }}" class="button">Go Back to Home</a>
+    </div>
 </body>
+
 </html>

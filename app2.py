@@ -124,18 +124,24 @@ def transportation():
     if request.method == 'POST':
         try:
             work_mode = request.form.get("work_mode", "")
+            work_car_type = ""
+            work_pt_type = ""
             if work_mode == "car":
-                work_type = request.form.get("work_car_type", "")
+                work_car_type = request.form.get("work_car_type", "")
+                work_pt_type = ""
             elif work_mode == "public transport":
-                work_type = request.form.get("work_pt_type", "")
+                work_car_type = ""
+                work_pt_type = request.form.get("work_pt_type", "")
             else:
-                work_type = ""
+                work_car_type = ""
+                work_pt_type = ""
 
             session["transportation"] = {
                 "work_distance_km": float(request.form.get("work_distance_km", 0)),
                 "work_days": int(request.form.get("work_days", 0)),
                 "work_mode": work_mode,
-                "work_type": work_type,
+                "work_car_type": work_car_type,
+                "work_pt_type": work_pt_type,
                 "leisure_distance": float(request.form.get("leisure_distance", 0)),
                 "leisure_days": int(request.form.get("leisure_days", 0)),
                 "leisure_mode": request.form.get("leisure_mode", ""),
@@ -194,7 +200,23 @@ def recommendations():
 @login_required
 def history():
     history_data = get_user_history(current_user.id)
+
+    min_total = min(e['diet_footprint'] + e['energy_footprint'] + e['transport_footprint'] for e in history_data)
+
+    for i, entry in enumerate(history_data):
+        total = entry['diet_footprint'] + entry['energy_footprint'] + entry['transport_footprint']
+        entry['total_footprint'] = total
+        if i == len(history_data) - 1:
+            entry['change'] = 0
+            entry['is_best'] = False
+        else:
+           prev_total = history_data[i + 1]['diet_footprint'] + history_data[i + 1]['energy_footprint'] + history_data[i + 1]['transport_footprint']
+           entry['change'] = total - prev_total
+
+        entry['is_best'] = total == min_total
+        
     return render_template("history.html", history=history_data)
+
 
 
 # Run Flask App
