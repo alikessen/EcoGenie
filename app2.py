@@ -206,6 +206,9 @@ def recommendations():
 def history():
     history_data = get_user_history(current_user.id)
 
+    if not history_data:
+        return render_template("history.html", history=[], best_record=None)
+    
     min_total = min(e['diet_footprint'] + e['energy_footprint'] + e['transport_footprint'] for e in history_data)
 
     for i, entry in enumerate(history_data):

@@ -8,18 +8,25 @@
         function updateTransportForm() {
             let working = document.getElementById("working").value;
             let transportMode = document.getElementById("work_mode").value;
-            let leisureDays = document.getElementById("leisure_days").value;
+            let leisureDays = parseInt(document.getElementById("leisure_days").value) || 0;
             let leisureMode = document.getElementById("leisure_mode").value;
-
+    
+            // Work Section
             document.getElementById("work_travel_section").style.display = working === "yes" ? "block" : "none";
             document.getElementById("car_options").style.display = transportMode === "car" ? "block" : "none";
             document.getElementById("public_transport_options").style.display = transportMode === "public transport" ? "block" : "none";
-            document.getElementById("leisure_travel_section").style.display = leisureDays > 0 ? "block" : "none";
-
+    
+            // --- Leisure Section ---
+            // Disable leisure inputs if leisure_days = 0
+            document.getElementById("leisure_distance").disabled = leisureDays === 0;
+            document.getElementById("leisure_mode").disabled = leisureDays === 0;
+            document.getElementById("leisure_type").disabled = leisureDays === 0;
+    
+            // Show or hide leisure type selector depending on mode
             let leisureTypeSection = document.getElementById("leisure_type_section");
             let leisureTypeSelect = document.getElementById("leisure_type");
             leisureTypeSelect.innerHTML = "";
-
+    
             if (leisureMode === "car") {
                 leisureTypeSection.style.display = "block";
                 leisureTypeSelect.innerHTML = `<option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="electric">Electric</option>`;
@@ -30,21 +37,21 @@
                 leisureTypeSection.style.display = "none";
             }
         }
-
+    
         function validateForm(event) {
             let errors = [];
             let working = document.getElementById("working").value;
-            let leisureDays = document.getElementById("leisure_days").value;
+            let leisureDays = parseInt(document.getElementById("leisure_days").value) || 0;
             let distanceToWork = document.getElementById("work_distance_km")?.value;
             let workDays = document.getElementById("work_days")?.value;
             let leisureDistance = document.getElementById("leisure_distance")?.value;
-
+    
             if (working === "yes") {
                 if (distanceToWork < 0) errors.push("Distance to work cannot be negative.");
                 if (workDays < 1 || workDays > 7) errors.push("Work days must be between 1 and 7.");
             }
             if (leisureDays > 0 && leisureDistance < 0) errors.push("Leisure travel distance cannot be negative.");
-
+    
             let errorBox = document.getElementById("error_messages");
             errorBox.innerHTML = "";
             if (errors.length > 0) {
@@ -126,10 +133,10 @@
 
             <div class="form-group">
                 <label>Leisure Travel Days per Week:</label>
-                <input type="number" id="leisure_days" name="leisure_days" min="0" max="7" onchange="updateTransportForm()" placeholder="e.g., 2">
+                <input type="number" id="leisure_days" name="leisure_days" min="0" max="7" placeholder="e.g., 2" required>
             </div>
 
-            <div id="leisure_travel_section" style="display: none;">
+            <div id="leisure_travel_section">
 
                 <div class="form-group">
                     <label>Leisure Travel Distance per Trip (km):</label>
@@ -147,7 +154,7 @@
                     </select>
                 </div>
 
-                <div id="leisure_type_section" class="form-group" style="display: none;">
+                <div id="leisure_type_section" class="form-group">
                     <label>Leisure Transport Type:</label>
                     <select name="leisure_type" id="leisure_type"></select>
                 </div>
