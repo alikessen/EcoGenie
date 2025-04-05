@@ -13,18 +13,31 @@
                 document.getElementById(`${dietType}_options`).style.display = "block";
             }
         }
-
+    
         function validateForm(event) {
+
             let errors = [];
             let getValue = id => parseFloat(document.getElementById(id)?.value || 0);
-
-            if (getValue("vegan_meals_per_week") > 21) errors.push("Vegan meals must be between 0 and 21.");
-            if (getValue("milk_liters_per_week") > 10) errors.push("Milk consumption must be between 0 and 10 liters.");
-            if (getValue("eggs_per_week") > 21) errors.push("Eggs consumption must be between 0 and 21.");
-            if (getValue("beef_per_kg") > 10) errors.push("Beef consumption must be between 0 and 10 kg.");
-            if (getValue("chicken_per_kg") > 10) errors.push("Chicken consumption must be between 0 and 10 kg.");
-            if (getValue("fish_per_kg") > 10) errors.push("Fish consumption must be between 0 and 10 kg.");
-
+    
+            if (getValue("vegan_meals_per_week") < 0 || getValue("vegan_meals_per_week") > 21) {
+                errors.push("Vegan meals must be between 0 and 21.");
+            }  
+            if (getValue("milk_liters_per_week") < 0 || getValue("milk_liters_per_week") > 10) {
+                errors.push("Milk consumption must be between 0 and 10 liters.");
+            } 
+            if (getValue("eggs_per_week") < 0 || getValue("eggs_per_week") > 21) {
+                errors.push("Eggs consumption must be between 0 and 21.");
+            }  
+            if (getValue("beef_per_kg") < 0 || getValue("beef_per_kg") > 10) {
+                errors.push("Beef consumption must be between 0 and 10 kg.");
+            }
+            if (getValue("chicken_per_kg") < 0 || getValue("chicken_per_kg") > 10) {
+                errors.push("Chicken consumption must be between 0 and 10 kg.");
+            }
+            if (getValue("fish_per_kg") < 0 || getValue("fish_per_kg") > 10) {
+                errors.push("Fish consumption must be between 0 and 10 kg.");
+            }
+    
             let errorBox = document.getElementById("error_messages");
             errorBox.innerHTML = "";
             if (errors.length > 0) {
@@ -33,6 +46,7 @@
             }
         }
     </script>
+    
 </head>
 
 <body onload="updateDietForm()">
@@ -62,7 +76,7 @@
             <div id="vegan_options" class="diet-section" style="display: none;">
                 <div class="form-group">
                     <label>Vegan Meals per Week (0 - 21):</label>
-                    <input type="number" id="vegan_meals_per_week" name="vegan_meals_per_week" min="0" max="21" placeholder="e.g., 7">
+                    <input type="number" id="vegan_meals_per_week" name="vegan_meals_per_week"  placeholder="e.g., 7">
                 </div>
             </div>
         
@@ -70,12 +84,12 @@
             <div id="vegetarian_options" class="diet-section" style="display: none;">
                 <div class="form-group">
                     <label>Milk Consumption (liters/week):</label>
-                    <input type="number" id="milk_liters_per_week" name="milk_liters_per_week" step="0.1" min="0" max="10" placeholder="e.g., 3">
+                    <input type="number" id="milk_liters_per_week" name="milk_liters_per_week" step="any"  placeholder="e.g., 3">
                 </div>
         
                 <div class="form-group">
                     <label>Eggs Consumption per Week:</label>
-                    <input type="number" id="eggs_per_week" name="eggs_per_week" min="0" max="21" placeholder="e.g., 12">
+                    <input type="number" id="eggs_per_week" name="eggs_per_week" placeholder="e.g., 12">
                 </div>
             </div>
         
@@ -83,32 +97,32 @@
             <div id="neither_options" class="diet-section" style="display: none;">
                 <div class="form-group">
                     <label>Beef Consumption (kg/week):</label>
-                    <input type="number" id="beef_per_kg" name="beef_per_kg" step="0.1" min="0" max="10" placeholder="e.g., 1.5">
+                    <input type="number" id="beef_per_kg" name="beef_per_kg" step="any" placeholder="e.g., 1.5">
                 </div>
         
                 <div class="form-group">
                     <label>Chicken Consumption (kg/week):</label>
-                    <input type="number" id="chicken_per_kg" name="chicken_per_kg" step="0.1" min="0" max="10" placeholder="e.g., 2">
+                    <input type="number" id="chicken_per_kg" name="chicken_per_kg" step="any" placeholder="e.g., 2">
                 </div>
         
                 <div class="form-group">
                     <label>Fish Consumption (kg/week):</label>
-                    <input type="number" id="fish_per_kg" name="fish_per_kg" step="0.1" min="0" max="10" placeholder="e.g., 1">
+                    <input type="number" id="fish_per_kg" name="fish_per_kg" step="any" placeholder="e.g., 1">
                 </div>
         
                 <div class="form-group">
                     <label>Vegetarian/Vegan Meals per Week:</label>
-                    <input type="number" id="vegan_meals_per_week" name="vegan_meals_per_week" min="0" max="21" placeholder="e.g., 5">
+                    <input type="number" id="vegan_meals_per_week" name="vegan_meals_per_week" placeholder="e.g., 5">
                 </div>
         
                 <div class="form-group">
                     <label>Milk Consumption (liters/week):</label>
-                    <input type="number" id="milk_liters_per_week" name="milk_liters_per_week" step="0.1" min="0" max="10" placeholder="e.g., 2">
+                    <input type="number" id="milk_liters_per_week" name="milk_liters_per_week" step="any" placeholder="e.g., 2">
                 </div>
         
                 <div class="form-group">
                     <label>Eggs Consumption per Week:</label>
-                    <input type="number" id="eggs_per_week" name="eggs_per_week" min="0" max="21" placeholder="e.g., 10">
+                    <input type="number" id="eggs_per_week" name="eggs_per_week" placeholder="e.g., 10">
                 </div>
             </div>
         
