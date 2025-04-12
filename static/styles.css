@@ -1,65 +1,342 @@
-/* General Page Styling */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background: #f4f7f9;
+    font-family: 'Arial', sans-serif;
     margin: 0;
-    padding: 0;
-    text-align: center;
-}
-
-/* Centered Form Container */
-.container {
-    width: 50%;
-    margin: auto;
-    padding: 30px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 5%;
-}
-
-/* Headings */
-h1 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-}
-
-/* Form Styling */
-form {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    padding: 20px; /* optional for spacing */
+    box-sizing: border-box;
+    
 }
 
-/* Input Fields */
-input, select {
-    width: 80%;
-    padding: 10px;
+.form-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.logo {
+    width: 240px;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 8px; /* Optional: smooth the corners */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    margin-bottom: 25px;
+    margin-top: 10px;
+    color: #2c3e50;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+    width: 90%;
+    padding: 12px;
     margin: 10px 0;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    font-size: 16px;
+    box-sizing: border-box;
 }
 
-/* Buttons */
 button {
     background-color: #27ae60;
     color: white;
+    padding: 12px 25px;
     border: none;
-    padding: 15px 30px;
-    font-size: 18px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 15px;
+    margin-top: 10px;
+    transition: background-color 0.3s;
 }
 
 button:hover {
     background-color: #219150;
 }
 
-/* Error Messages */
-.error {
-    color: red;
-    font-size: 16px;
+a {
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+p {
+    margin-top: 15px;
+}
+
+/* Container for index.html */
+.index-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    margin-top: 20px;
+}
+
+/* Buttons (shared for index, login, register) */
+.index-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.index-buttons a, 
+.index-buttons button {
+    background-color: #27ae60;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.index-buttons a:hover, 
+.index-buttons button:hover {
+    background-color: #219150;
+}
+
+/* Logout link */
+.logout-link {
+    margin-top: 20px;
+    display: inline-block;
+    color: #e74c3c;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.logout-link:hover {
+    color: #c0392b;
+}
+
+/* History link */
+.history-link {
+    margin-top: 10px;
+    display: block;
+    color: #2980b9;
+}
+
+.history-link:hover {
+    text-decoration: underline;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.button {
+    display: block;
+    background-color: #27ae60;
+    color: white;
+    padding: 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #219150;
+}
+
+.logout {
+    background-color: #e74c3c;
+}
+
+.logout:hover {
+    background-color: #c0392b;
+}
+
+
+
+
+
+.intro-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 500px;
+    margin: 30px auto;
+}
+
+.intro-section h1 {
+    color: #2c3e50;
     margin-bottom: 10px;
+}
+
+.intro-section p {
+    color: #555;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.button.green {
+    background-color: #27ae60;
+    color: white;
+}
+
+.button.green:hover {
+    background-color: #219150;
+}
+
+.button.blue {
+    background-color: #3498db;
+    color: white;
+}
+
+.button.blue:hover {
+    background-color: #2a80b9;
+}
+
+.diet-form .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.diet-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.diet-form input, .diet-form select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+
+
+.recommendations {
+    margin-top: 20px;
+}
+
+.recommendation-card {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: left;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.recommendation-card p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.co2-saving {
+    display: block;
+    margin-top: 5px;
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* History Page */
+
+.history-page {
+    background: #f4f7f9;
+    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    padding-top: 40px;
+    box-sizing: border-box;
+}
+
+/* Always keep header visible */
+.history-page h1 {
+    margin: 0 auto 20px auto;
+    text-align: center;
+}
+
+/* Center and contain the form properly */
+.history-page .form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Cards */
+.history-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* History Card */
+.history-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 250px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s;
+}
+
+.history-card:hover {
+    transform: translateY(-3px);
+}
+
+/* Best Record Style */
+.best-record {
+    border: 2px solid gold;
+}
+
+.best-text {
+    color: gold;
+    font-weight: bold;
+}
+
+.increase-text {
+    color: red;
+    font-weight: bold;
+}
+
+.decrease-text {
+    color: green;
+    font-weight: bold;
+}
+
+/* Text inside cards */
+.history-card p {
+    margin: 5px 0;
 }

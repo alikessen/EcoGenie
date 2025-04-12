@@ -80,7 +80,7 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
         egg_savings = 3 * egg_emission  
         recommendations.append(("Reduce your egg consumption by 3 per week.", egg_savings))
 
-    if diet_data.get("vegan_meals_per_week", 0) < 4:
+    if diet_data.get("vegan_meals_per_week", 0) < 5:
         avg_meal_emission = carbon_data["diet"]["average_meal"]
         vegan_meal_emission = carbon_data["diet"]["vegan_meals"]
         co2_saved_per_meal = avg_meal_emission - vegan_meal_emission
@@ -88,7 +88,7 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
 
         recommendations.append(("Try making your breakfasts plant-based at least 4 times per week.", vegan_savings))
 
-    elif 4 <= diet_data["vegan_meals_per_week"] < 10:
+    elif 5 <= diet_data["vegan_meals_per_week"] < 10:
         avg_meal_emission = carbon_data["diet"]["average_meal"]
         vegan_meal_emission = carbon_data["diet"]["vegan_meals"]
         co2_saved_per_meal = avg_meal_emission - vegan_meal_emission
@@ -136,8 +136,12 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
             appliance_savings
         ))
 
-    # Rank Recommendations by CO2 Savings
-    ranked_recommendations = sorted(recommendations, key=lambda x: x[1], reverse=True)
+    # Filter out empty or zero-saving recommendations
+    recommendations = [(text, saving) for text, saving in recommendations if saving > 0]
 
-    # Return Top 3 Recommendations
-    return ranked_recommendations[:3]
+    # Sort by highest saving
+    recommendations.sort(key=lambda x: x[1], reverse=True)
+
+    # Return the sorted list 
+    return recommendations[:3]
+

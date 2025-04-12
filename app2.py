@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-from modules.diet_module import getDietData, calculateDietFootprint
-from modules.energy_module import getEnergyData, calculateEnergyFootprint
-from modules.transportation import getTransportData, calculateTransportFootprint
+from modules.diet_module import calculateDietFootprint
+from modules.energy_module import calculateEnergyFootprint
+from modules.transportation_module import calculateTransportFootprint
 from modules.recommendation_module import generateLogicalRecommendations
-from modules.db import get_db_connection, register_user, get_user_by_username, get_user_by_id, save_user_input, get_user_history
+from modules.db import register_user, get_user_by_username, get_user_by_id, save_user_input, get_user_history
 
 
 # Flask App
@@ -35,9 +35,11 @@ def load_user(user_id):
 
 # Home Page
 @app.route('/')
-@login_required
 def index():
-    print("Logged in as:", current_user.username)
+    if current_user.is_authenticated:
+        print("Logged in as:", current_user.username)
+    else:
+        print("Not logged in.")
     return render_template('index.html')
 
 # Register Route
@@ -76,7 +78,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("login"))
+    return redirect(url_for("index"))
 
 # Diet Page
 @app.route('/diet', methods=['GET', 'POST'])
@@ -121,19 +123,30 @@ def energy():
 def transportation():
     if request.method == 'POST':
         try:
-            work_mode = request.form.get("work_mode", "")
-            if work_mode == "car":
-                work_type = request.form.get("work_car_type", "")
-            elif work_mode == "public transport":
-                work_type = request.form.get("work_pt_type", "")
-            else:
-                work_type = ""
+            working = request.form.get("working", "")
+            work_distance_km = 0
+            work_days = 0
+            work_mode = ""
+            work_car_type = ""
+            work_pt_type = ""
+
+            if working == "yes":
+
+                work_mode = request.form.get("work_mode", "")
+                if work_mode == "car":
+                    work_car_type = request.form.get("work_car_type", "")
+                elif work_mode == "public transport":
+                    work_pt_type = request.form.get("work_pt_type", "")
+                work_distance_km = float(request.form.get("work_distance_km", 0))
+                work_days = int(request.form.get("work_days", 0))
 
             session["transportation"] = {
-                "work_distance_km": float(request.form.get("work_distance_km", 0)),
-                "work_days": int(request.form.get("work_days", 0)),
+                "working": working,
+                "work_distance_km": work_distance_km,
+                "work_days": work_days,
                 "work_mode": work_mode,
-                "work_type": work_type,
+                "work_car_type": work_car_type,
+                "work_pt_type": work_pt_type,
                 "leisure_distance": float(request.form.get("leisure_distance", 0)),
                 "leisure_days": int(request.form.get("leisure_days", 0)),
                 "leisure_mode": request.form.get("leisure_mode", ""),
@@ -192,7 +205,26 @@ def recommendations():
 @login_required
 def history():
     history_data = get_user_history(current_user.id)
+
+    if not history_data:
+        return render_template("history.html", history=[], best_record=None)
+    
+    min_total = min(e['diet_footprint'] + e['energy_footprint'] + e['transport_footprint'] for e in history_data)
+
+    for i, entry in enumerate(history_data):
+        total = entry['diet_footprint'] + entry['energy_footprint'] + entry['transport_footprint']
+        entry['total_footprint'] = total
+        if i == len(history_data) - 1:
+            entry['change'] = 0
+            entry['is_best'] = False
+        else:
+           prev_total = history_data[i + 1]['diet_footprint'] + history_data[i + 1]['energy_footprint'] + history_data[i + 1]['transport_footprint']
+           entry['change'] = total - prev_total
+
+        entry['is_best'] = total == min_total
+        
     return render_template("history.html", history=history_data)
+
 
 
 # Run Flask App

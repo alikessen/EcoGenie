@@ -9,13 +9,14 @@ def calculateTransportFootprint(transport_data):
         work_distance_km = transport_data.get("work_distance_km", 0)
         work_days = transport_data.get("work_days", 0)
         work_mode = transport_data.get("work_mode", "")
-        work_type = transport_data.get("work_type", "")
+        work_car_type = transport_data.get("work_car_type", "")
+        work_pt_type = transport_data.get("work_pt_type", "")
         total_work_distance = work_distance_km * work_days
 
         if work_mode == "car":
-            footprint += total_work_distance * carbon_data["transport"][f"car_{work_type}"]
+            footprint += total_work_distance * carbon_data["transport"][f"car_{work_car_type}"]
         elif work_mode == "public transport":
-            footprint += total_work_distance * carbon_data["transport"][work_type]
+            footprint += total_work_distance * carbon_data["transport"][work_pt_type]
         elif work_mode in ["walk", "cycle"]:
             footprint += 0.0  # Zero-emission transport
 

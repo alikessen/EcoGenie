@@ -1,9 +1,9 @@
 category,item,co2_per_unit
-diet,beef,40
-diet,chicken,8
-diet,fish,4
+diet,beef,99.48
+diet,chicken,9.87
+diet,fish,4.5
 diet,milk,1.25
-diet,eggs,0.183
+diet,eggs,0.054
 diet,vegan_meals,1
 diet,average_meal,3.25
 energy,electricity_non_renewable,0.5

@@ -1,28 +1,46 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>My History - EcoGenie</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-        .entry { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
-        h2 { color: #27ae60; }
-    </style>
-</head>
-<body>
-    <h1>My Carbon Footprint History</h1>
+<html lang="en">
 
-    {% if history %}
-        {% for entry in history %}
-            <div class="entry">
-                <p><strong>Date:</strong> {{ entry.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
-                <p><strong>Diet CO₂:</strong> {{ entry.diet_footprint }} kg</p>
-                <p><strong>Energy CO₂:</strong> {{ entry.energy_footprint }} kg</p>
-                <p><strong>Transport CO₂:</strong> {{ entry.transport_footprint }} kg</p>
-                <p><strong>Total:</strong> {{ entry.diet_footprint + entry.energy_footprint + entry.transport_footprint }} kg</p>
+<head>
+    <meta charset="UTF-8">
+    <title>My History - EcoGenie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body class="history-page">
+    <div class="form-container">
+
+        <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
+        <h1>My Carbon Footprint History</h1>
+
+        {% if history %}
+            <div class="history-container">
+                {% for entry in history %}
+                    <div class="history-card {% if entry.is_best %}best-record{% endif %}">
+                        <p><strong>Date:</strong> {{ entry.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p><strong>Diet CO₂:</strong> {{ entry.diet_footprint }} kg</p>
+                        <p><strong>Energy CO₂:</strong> {{ entry.energy_footprint }} kg</p>
+                        <p><strong>Transport CO₂:</strong> {{ entry.transport_footprint }} kg</p>
+                        <p><strong>Total CO₂:</strong> {{ entry.total_footprint }} kg</p>
+
+                        {% if entry.is_best %}
+                            <p class="best-text">🏆 This is your best record!</p>
+                        {% elif entry.change > 0 %}
+                            <p class="increase-text">Your CO₂ increased by {{ entry.change | round(2) }} kg compared to last record.</p>
+                        {% elif entry.change < 0 %}
+                            <p class="decrease-text">You reduced your CO₂ by {{ -entry.change | round(2) }} kg compared to last record!</p>
+                        {% else %}
+                            <p>No change compared to last record.</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    {% else %}
-        <p>You have no history yet. Start by entering your lifestyle data.</p>
-    {% endif %}
+        {% else %}
+            <p>You have no history yet. Start by entering your lifestyle data.</p>
+        {% endif %}
+
+        <a href="{{ url_for('index') }}" class="button">Back to Home</a>
+    </div>
 </body>
+
 </html>

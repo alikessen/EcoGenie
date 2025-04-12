@@ -1,119 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
     <title>Diet Information</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <script>
         function updateDietForm() {
             let dietType = document.getElementById("diet_type").value;
-
-            // Hide all sections first
-            document.getElementById("vegan_options").style.display = "none";
-            document.getElementById("vegetarian_options").style.display = "none";
-            document.getElementById("neither_options").style.display = "none";
-
-            // Show relevant fields
-            if (dietType === "vegan") {
-                document.getElementById("vegan_options").style.display = "block";
-            } else if (dietType === "vegetarian") {
-                document.getElementById("vegetarian_options").style.display = "block";
-            } else if (dietType === "neither") {
-                document.getElementById("neither_options").style.display = "block";
+            document.querySelectorAll(".diet-section").forEach(section => section.style.display = "none");
+            if (dietType) {
+                document.getElementById(`${dietType}_options`).style.display = "block";
             }
         }
-
+    
         function validateForm(event) {
-            let valid = true;
+
             let errors = [];
-
-            // Get values
-            let veganMeals = document.getElementById("vegan_meals_per_week")?.value;
-            let milkLiters = document.getElementById("milk_liters_per_week")?.value;
-            let eggsPerWeek = document.getElementById("eggs_per_week")?.value;
-            let beefKg = document.getElementById("beef_per_kg")?.value;
-            let chickenKg = document.getElementById("chicken_per_kg")?.value;
-            let fishKg = document.getElementById("fish_per_kg")?.value;
-
-            // Validation checks
-            if (veganMeals && (veganMeals < 0 || veganMeals > 21)) {
-                errors.push("Vegan meals per week must be between 0 and 21.");
+            let getValue = id => parseFloat(document.getElementById(id)?.value || 0);
+    
+            if (getValue("vegan_meals_per_week") < 0 || getValue("vegan_meals_per_week") > 21) {
+                errors.push("Vegan meals must be between 0 and 21.");
+            }  
+            if (getValue("milk_liters_per_week") < 0 || getValue("milk_liters_per_week") > 10) {
+                errors.push("Milk consumption must be between 0 and 10 liters.");
+            } 
+            if (getValue("eggs_per_week") < 0 || getValue("eggs_per_week") > 21) {
+                errors.push("Eggs consumption must be between 0 and 21.");
+            }  
+            if (getValue("beef_per_kg") < 0 || getValue("beef_per_kg") > 10) {
+                errors.push("Beef consumption must be between 0 and 10 kg.");
             }
-            if (milkLiters && (milkLiters < 0 || milkLiters > 10)) {
-                errors.push("Milk consumption must be between 0 and 10 liters per week.");
+            if (getValue("chicken_per_kg") < 0 || getValue("chicken_per_kg") > 10) {
+                errors.push("Chicken consumption must be between 0 and 10 kg.");
             }
-            if (eggsPerWeek && (eggsPerWeek < 0 || eggsPerWeek > 21)) {
-                errors.push("Eggs consumption must be between 0 and 21 per week.");
+            if (getValue("fish_per_kg") < 0 || getValue("fish_per_kg") > 10) {
+                errors.push("Fish consumption must be between 0 and 10 kg.");
             }
-            if (beefKg && (beefKg < 0 || beefKg > 10)) {
-                errors.push("Beef consumption must be between 0 and 10 kg per week.");
-            }
-            if (chickenKg && (chickenKg < 0 || chickenKg > 10)) {
-                errors.push("Chicken consumption must be between 0 and 10 kg per week.");
-            }
-            if (fishKg && (fishKg < 0 || fishKg > 10)) {
-                errors.push("Fish consumption must be between 0 and 10 kg per week.");
-            }
-
-            // Display errors if any
+    
             let errorBox = document.getElementById("error_messages");
             errorBox.innerHTML = "";
             if (errors.length > 0) {
-                event.preventDefault();  // Prevent form submission
+                event.preventDefault();
                 errorBox.innerHTML = "<ul><li>" + errors.join("</li><li>") + "</li></ul>";
             }
         }
     </script>
+    
 </head>
+
 <body onload="updateDietForm()">
-    <h1>Enter Your Diet Information</h1>
 
-    <div id="error_messages" style="color: red;"></div> <!-- Error messages appear here -->
+    <div class="form-container">
 
-    <form method="POST" onsubmit="validateForm(event)">
-        <label>Diet Type:</label>
-        <select name="diet_type" id="diet_type" onchange="updateDietForm()">
-            <option value="vegan">Vegan</option>
-            <option value="vegetarian">Vegetarian</option>
-            <option value="neither">Neither</option>
-        </select><br>
+        <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
 
-        <!-- Vegan Options -->
-        <div id="vegan_options" style="display:none;">
-            <label title="Enter how many vegan meals you eat per week (0 to 21).">Vegan Meals per Week:</label>
-            <input type="number" id="vegan_meals_per_week" name="vegan_meals_per_week" min="0" max="21" placeholder="e.g., 7"><br>
-        </div>
+        <h1>Dietary Information</h1>
+        <p>Tell us about your eating habits to help EcoGenie estimate your diet-related CO₂ footprint.</p>
 
-        <!-- Vegetarian Options -->
-        <div id="vegetarian_options" style="display:none;">
-            <label title="Enter how many liters of milk you drink per week (0 to 10).">Milk Consumption (liters/week):</label>
-            <input type="number" id="milk_liters_per_week" name="milk_liters_per_week" step="0.1" min="0" max="10" placeholder="e.g., 3"><br>
+        <div id="error_messages" style="color: red;"></div>
 
-            <label title="Enter how many eggs you eat per week (0 to 21).">Eggs Consumption per Week:</label>
-            <input type="number" id="eggs_per_week" name="eggs_per_week" min="0" max="21" placeholder="e.g., 12"><br>
-        </div>
+        <form method="POST" onsubmit="validateForm(event)" class="diet-form">
 
-        <!-- Neither (Meat Eaters) Options -->
-        <div id="neither_options" style="display:none;">
-            <label title="Enter how many kg of beef you consume per week (0 to 10).">Beef Consumption (kg/week):</label>
-            <input type="number" id="beef_per_kg" name="beef_per_kg" step="0.1" min="0" max="10" placeholder="e.g., 1.5"><br>
+            <div class="form-group">
+                <label for="diet_type">Diet Type:</label>
+                <select name="diet_type" id="diet_type" onchange="updateDietForm()" required>
+                    <option value="" disabled selected>Select your diet type</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="neither">Neither</option>
+                </select>
+            </div>
+        
+            <!-- Vegan -->
+            <div id="vegan_options" class="diet-section" style="display: none;">
+                <div class="form-group">
+                    <label>Vegan Meals per Week (0 - 21):</label>
+                    <input type="number" id="vegan_meals_per_week" name="vegan_meals_per_week"  placeholder="e.g., 7">
+                </div>
+            </div>
+        
+            <!-- Vegetarian -->
+            <div id="vegetarian_options" class="diet-section" style="display: none;">
+                <div class="form-group">
+                    <label>Milk Consumption (liters/week):</label>
+                    <input type="number" id="milk_liters_per_week" name="milk_liters_per_week" step="any"  placeholder="e.g., 3">
+                </div>
+        
+                <div class="form-group">
+                    <label>Eggs Consumption per Week:</label>
+                    <input type="number" id="eggs_per_week" name="eggs_per_week" placeholder="e.g., 12">
+                </div>
+            </div>
+        
+            <!-- Neither -->
+            <div id="neither_options" class="diet-section" style="display: none;">
+                <div class="form-group">
+                    <label>Beef Consumption (kg/week):</label>
+                    <input type="number" id="beef_per_kg" name="beef_per_kg" step="any" placeholder="e.g., 1.5">
+                </div>
+        
+                <div class="form-group">
+                    <label>Chicken Consumption (kg/week):</label>
+                    <input type="number" id="chicken_per_kg" name="chicken_per_kg" step="any" placeholder="e.g., 2">
+                </div>
+        
+                <div class="form-group">
+                    <label>Fish Consumption (kg/week):</label>
+                    <input type="number" id="fish_per_kg" name="fish_per_kg" step="any" placeholder="e.g., 0.5">
+                </div>
+        
+                <div class="form-group">
+                    <label>Vegetarian/Vegan Meals per Week:</label>
+                    <input type="number" id="vegan_meals_per_week" name="vegan_meals_per_week" placeholder="e.g., 5">
+                </div>
+        
+                <div class="form-group">
+                    <label>Milk Consumption (liters/week):</label>
+                    <input type="number" id="milk_liters_per_week" name="milk_liters_per_week" step="any" placeholder="e.g., 2">
+                </div>
+        
+                <div class="form-group">
+                    <label>Eggs Consumption per Week:</label>
+                    <input type="number" id="eggs_per_week" name="eggs_per_week" placeholder="e.g., 10">
+                </div>
+            </div>
+        
+            <button type="submit">Next</button>
+        </form>
+    </div>
 
-            <label title="Enter how many kg of chicken you consume per week (0 to 10).">Chicken Consumption (kg/week):</label>
-            <input type="number" id="chicken_per_kg" name="chicken_per_kg" step="0.1" min="0" max="10" placeholder="e.g., 2"><br>
-
-            <label title="Enter how many kg of fish/seafood you consume per week (0 to 10).">Fish Consumption (kg/week):</label>
-            <input type="number" id="fish_per_kg" name="fish_per_kg" step="0.1" min="0" max="10" placeholder="e.g., 1"><br>
-
-            <label title="Enter how many vegetarian or vegan meals you have per week (0 to 21).">Vegetarian or Vegan Meals per Week:</label>
-            <input type="number" id="vegan_meals_per_week" name="vegan_meals_per_week" min="0" max="21" placeholder="e.g., 5"><br>
-
-            <label title="Enter how many liters of milk you drink per week (0 to 10).">Milk Consumption (liters/week):</label>
-            <input type="number" id="milk_liters_per_week" name="milk_liters_per_week" step="0.1" min="0" max="10" placeholder="e.g., 2"><br>
-
-            <label title="Enter how many eggs you eat per week (0 to 21).">Eggs Consumption per Week:</label>
-            <input type="number" id="eggs_per_week" name="eggs_per_week" min="0" max="21" placeholder="e.g., 10"><br>
-        </div>
-
-        <button type="submit">Next</button>
-    </form>
 </body>
+
 </html>
