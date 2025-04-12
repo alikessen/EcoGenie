@@ -1,8 +1,7 @@
 from modules.carbon_data import carbon_data
-
+"""
 def getDietData():
-    """Collects user input for diet habits and returns a structured dictionary."""
-    try:
+    \"\"\"Collects user input for diet habits and returns a structured dictionary.\"\"\"    try:
         print("Diet Details:\n")
     except KeyError as e:
         raise ValueError(f"Missing CO₂ data for: {e}")
@@ -126,7 +125,7 @@ def getDietData():
             "milk_liters_per_week": milk_liters_per_week,
             "eggs_per_week": eggs_per_week,
         }
-
+        """
 def calculateDietFootprint(diet_data):
     """Calculates the diet-related carbon footprint using values from CSV."""
     try:

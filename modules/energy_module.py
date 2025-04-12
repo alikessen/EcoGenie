@@ -1,7 +1,7 @@
 from modules.carbon_data import carbon_data
-
+"""
 def getEnergyData():
-    """Collects user input for energy consumption and returns a structured dictionary."""
+    \"\"\"Collects user input for energy consumption and returns a structured dictionary.\"\"\"
     try:
         print("Energy Consumption Details:\n")
     except KeyError as e:
@@ -52,7 +52,7 @@ def getEnergyData():
         "gas_usage_cubic_meters": gas_usage_cubic_meters,
         "energy_efficient_appliances": energy_efficient_appliances,
     }
-
+"""
 def calculateEnergyFootprint(energy_data):
     """Calculates the energy-related carbon footprint using values from CSV."""
     try:

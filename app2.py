@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-from modules.diet_module import getDietData, calculateDietFootprint
-from modules.energy_module import getEnergyData, calculateEnergyFootprint
-from modules.transportation import getTransportData, calculateTransportFootprint
+from modules.diet_module import calculateDietFootprint
+from modules.energy_module import calculateEnergyFootprint
+from modules.transportation_module import calculateTransportFootprint
 from modules.recommendation_module import generateLogicalRecommendations
-from modules.db import get_db_connection, register_user, get_user_by_username, get_user_by_id, save_user_input, get_user_history
+from modules.db import register_user, get_user_by_username, get_user_by_id, save_user_input, get_user_history
 
 
 # Flask App
