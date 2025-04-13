@@ -88,14 +88,37 @@
         <form method="POST" onsubmit="validateForm(event)" class="diet-form">
 
             <div class="form-group">
-                <label>Electricity Usage (kWh/month):</label>
+                <label>
+                    Electricity Usage (kWh/month):
+                    <span class="info-wrapper">
+                        <span class="info-icon">i</span>
+                        <div class="tooltip">
+                            You can find this information in your energy provider's app (e.g., Octopus, OVO Energy), or estimate it using your electricity bill.<br><br>
+                            On average, 1 kWh of electricity costs approximately <strong>22 pence</strong> in the UK.
+                        </div>
+                    </span>
+                </label>
+
                 <input type="number" id="electricity_kwh_per_month" name="electricity_kwh_per_month" step="0.1" placeholder="e.g., 350" oninput="updateEnergyForm()">
             </div>
 
             <div id="other_energy_questions">
 
                 <div class="form-group">
-                    <label>Electricity Source:</label>
+                    <label>
+                        Electricity Source:
+                        <span class="info-wrapper">
+                            <span class="info-icon">i</span>
+                            <div class="tooltip">
+                                You can find this information by logging into your energy provider’s app or checking your latest bill.<br><br>
+                                Look for statements like:<br>
+                                • <strong>"100% renewable electricity": </strong><strong>Yes</strong><br>
+                                • <strong>"Partially renewable"</strong> or "Green Mix": <strong>Some</strong><br>
+                                • No mention of renewables: <strong>No</strong>
+                            </div>
+                        </span>
+                    </label>
+
                     <select name="electricity_source" id="electricity_source">
                         <option value="" disabled selected>Select</option>
                         <option value="yes">Yes (100% Renewable)</option>
