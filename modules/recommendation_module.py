@@ -50,22 +50,22 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
 
    
     # Diet Recommendations
-    if diet_data.get("beef_per_kg", 0) > 1:
+    if diet_data.get("beef_per_kg", 0) > 0.5:
         beef_emission = carbon_data["diet"]["beef"]
         beef_savings = (diet_data["beef_per_kg"] * 0.5) * beef_emission
         recommendations.append(("Reduce your beef consumption by 50% per week.", beef_savings))
 
-    if diet_data.get("chicken_per_kg", 0) > 1:
+    if diet_data.get("chicken_per_kg", 0) > 0.2:
         chicken_emission = carbon_data["diet"]["chicken"]
         chicken_savings = (diet_data["chicken_per_kg"] * 0.5) * chicken_emission
         recommendations.append(("Reduce your chicken consumption by 50% per week.", chicken_savings))
 
-    if diet_data.get("fish_per_kg", 0) > 1:
+    if diet_data.get("fish_per_kg", 0) > 0.1:
         fish_emission = carbon_data["diet"]["fish"]
         fish_savings = (diet_data["fish_per_kg"] * 0.5) * fish_emission
         recommendations.append(("Reduce your fish consumption by 50% per week.", fish_savings))
 
-    if diet_data.get("milk_liters_per_week", 0) > 2:
+    if diet_data.get("milk_liters_per_week", 0) > 0.5:
         milk_emission = carbon_data["diet"]["milk"]
         milk_savings = (diet_data["milk_liters_per_week"] * 0.5) * milk_emission
         recommendations.append(("Reduce your milk consumption by 50% per week.", milk_savings))
@@ -83,19 +83,19 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
 
     vegan_meals = int(diet_data.get("vegan_meals_per_week", 0))
 
-    if vegan_meals < 5:
+    if vegan_meals < 7:
         avg_meal_emission = carbon_data["diet"]["average_meal"]
         vegan_meal_emission = carbon_data["diet"]["vegan_meals"]
         co2_saved_per_meal = avg_meal_emission - vegan_meal_emission
-        vegan_savings = co2_saved_per_meal * (4 - diet_data["vegan_meals_per_week"])
+        vegan_savings = co2_saved_per_meal * (7 - diet_data["vegan_meals_per_week"])
 
-        recommendations.append(("Try making your breakfasts plant-based at least 4 times per week.", vegan_savings))
+        recommendations.append(("Try making your breakfasts plant-based 7 times per week.", vegan_savings))
 
-    elif 5 <= vegan_meals < 10:
+    elif 7 <= vegan_meals < 14:
         avg_meal_emission = carbon_data["diet"]["average_meal"]
         vegan_meal_emission = carbon_data["diet"]["vegan_meals"]
         co2_saved_per_meal = avg_meal_emission - vegan_meal_emission
-        needed_meals = 10 - diet_data["vegan_meals_per_week"]
+        needed_meals = 15 - diet_data["vegan_meals_per_week"]
         vegan_savings = co2_saved_per_meal * needed_meals
 
         recommendations.append((f"Try increasing your plant-based meals by {needed_meals} more per week.", vegan_savings))
@@ -125,7 +125,7 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
     gas_emission_factor = carbon_data["energy"]["gas"]
     gas_footprint = gas_usage * gas_emission_factor
     if gas_usage > 50:
-        savings = gas_footprint * 0.1  # You may later link this to actual gas footprint
+        savings = gas_footprint * 0.1  
         recommendations.append((
             "Reduce gas heating usage by 10%.", 
             savings
@@ -146,5 +146,5 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
     recommendations.sort(key=lambda x: x[1], reverse=True)
 
     # Return the sorted list 
-    return recommendations[:3]
+    return recommendations[:10]
 
