@@ -129,7 +129,8 @@ def transportation():
             work_mode = ""
             work_car_type = ""
             work_pt_type = ""
-
+            
+            # Process work-related fields only if user is working
             if working == "yes":
 
                 work_mode = request.form.get("work_mode", "")
@@ -140,6 +141,17 @@ def transportation():
                 work_distance_km = float(request.form.get("work_distance_km", 0))
                 work_days = int(request.form.get("work_days", 0))
 
+            # Safely process leisure inputs even if blank
+            try:
+                leisure_distance = float(request.form.get("leisure_distance") or 0)
+            except ValueError:
+                leisure_distance = 0
+
+            try:
+                leisure_days = int(request.form.get("leisure_days") or 0)
+            except ValueError:
+                leisure_days = 0
+
             session["transportation"] = {
                 "working": working,
                 "work_distance_km": work_distance_km,
@@ -147,8 +159,8 @@ def transportation():
                 "work_mode": work_mode,
                 "work_car_type": work_car_type,
                 "work_pt_type": work_pt_type,
-                "leisure_distance": float(request.form.get("leisure_distance", 0)),
-                "leisure_days": int(request.form.get("leisure_days", 0)),
+                "leisure_distance": leisure_distance,
+                "leisure_days": leisure_days,
                 "leisure_mode": request.form.get("leisure_mode", ""),
                 "leisure_type": request.form.get("leisure_type", "")
             }
