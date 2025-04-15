@@ -1,8 +1,9 @@
 import csv
 import os
 
+ #Load CO2 emission data from CSV and return it as a dictionary.
 def load_carbon_data():
-    """Load CO₂ emission data from CSV and return it as a dictionary."""
+   
     carbon_data = {}
     csv_path = os.path.join(os.path.dirname(__file__), "../data/carbon_data.csv")
 
@@ -23,6 +24,6 @@ def load_carbon_data():
 # Load the data at startup
 carbon_data = load_carbon_data()
 
-# Debugging: Print loaded data when running this file
+# Print loaded data when running this file
 if __name__ == "__main__":
     print(carbon_data)

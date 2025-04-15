@@ -4,8 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Diet Information</title>
+
+     <!-- Link to the external stylesheet -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+
+
+    <!-- JavaScript functions for dynamic form handling -->
     <script>
+
+        // Show the selected diet type section, hide others
         function updateDietForm() {
             let dietType = document.getElementById("diet_type").value;
             document.querySelectorAll(".diet-section").forEach(section => section.style.display = "none");
@@ -14,11 +21,13 @@
             }
         }
     
+        // Validate numeric inputs before form submission
         function validateForm(event) {
 
             let errors = [];
             let getValue = id => parseFloat(document.getElementById(id)?.value || 0);
     
+            // Range validations
             if (getValue("vegan_meals_per_week") < 0 || getValue("vegan_meals_per_week") > 21) {
                 errors.push("Vegan meals must be between 0 and 21.");
             }  
@@ -37,7 +46,8 @@
             if (getValue("fish_per_kg") < 0 || getValue("fish_per_kg") > 10) {
                 errors.push("Fish consumption must be between 0 and 10 kg.");
             }
-    
+
+            // Display errors
             let errorBox = document.getElementById("error_messages");
             errorBox.innerHTML = "";
             if (errors.length > 0) {
@@ -51,10 +61,12 @@
 
 <body onload="updateDietForm()">
 
+    <!-- Main content container -->
     <div class="form-container">
 
         <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
-
+        
+        <!-- Page title and instructions -->
         <h1>Dietary Information</h1>
         <p>Tell us about your eating habits to help EcoGenie estimate your diet-related CO₂ footprint.</p>
         <p style="font-size: 14px; color: #555;">
@@ -62,10 +74,13 @@
             For example, to enter 100 grams, type <code>0.1</code>.
           </p>
 
+        <!-- Area for displaying validation messages -->  
         <div id="error_messages" style="color: red;"></div>
 
+        <!-- Dietary input form -->
         <form method="POST" onsubmit="validateForm(event)" class="diet-form">
 
+            <!-- Diet type selection -->
             <div class="form-group">
                 <label for="diet_type">Diet Type:</label>
                 <select name="diet_type" id="diet_type" onchange="updateDietForm()" required>
@@ -135,6 +150,7 @@
                 </div>
             </div>
         
+            <!-- Submit button -->
             <button type="submit">Next</button>
         </form>
     </div>

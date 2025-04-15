@@ -1,8 +1,12 @@
 from modules.carbon_data import carbon_data
 
-
+# Generates personalized sustainability recommendations based on a user's lifestyle data in transportation, diet, and energy use.
 def generateLogicalRecommendations(transportation_data, diet_data, energy_data, user_footprints):
     recommendations = []
+
+    # ---------------------------------------
+    # Transportation Recommendations
+    # ---------------------------------------
 
     # Transport: Work travel
     mode_of_transport = transportation_data.get("work_mode", "")
@@ -25,6 +29,7 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
             recommendations.append(("Switch to public transport for long commutes to reduce emissions.", savings))
 
     elif mode_of_transport == "public transport" and work_pt_type == "bus":
+        # Suggest tube over bus for lower emissions
         savings = (total_distance_work * carbon_data["transport"]["bus"]) - (total_distance_work * carbon_data["transport"]["tube"])
         recommendations.append(("Switch from bus to tube if possible for faster and cleaner commutes.", savings))
 
@@ -33,13 +38,13 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
     leisure_distance = transportation_data.get("leisure_distance", 0)
     leisure_days = transportation_data.get("leisure_days", 0)
     leisure_type = transportation_data.get("leisure_type", "")
-    total_distance_leisure = leisure_days * leisure_distance * 2
+    total_distance_leisure = leisure_days * leisure_distance * 2 # Round trip
 
     if leisure_mode == "car":
         leisure_emission_factor = carbon_data["transport"].get(f"car_{leisure_type}", 0)
 
         if leisure_emission_factor > 0:
-            savings = total_distance_leisure * leisure_emission_factor / 2
+            savings = total_distance_leisure * leisure_emission_factor * 0.5 # Reduce by %50
             recommendations.append(("Reduce leisure car travel by %50 per week", savings))
 
     elif leisure_mode == "public transport" and leisure_type == "bus":
@@ -48,8 +53,11 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
         savings = total_distance_leisure * (bus_emission_factor - tube_emission_factor)
         recommendations.append(("Use the tube instead of the bus for lower emissions during leisure trips.", savings))
 
-   
+
+    # ---------------------------------------
     # Diet Recommendations
+    # ---------------------------------------
+
     if diet_data.get("beef_per_kg", 0) > 0.5:
         beef_emission = carbon_data["diet"]["beef"]
         beef_savings = (diet_data["beef_per_kg"] * 0.5) * beef_emission
@@ -101,8 +109,10 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
         recommendations.append((f"Try increasing your plant-based meals by {needed_meals} more per week.", vegan_savings))
 
 
-
+    # ---------------------------------------
     # Energy Recommendations
+    # ---------------------------------------
+
     electricity_source = energy_data.get("electricity_source", "")
     electricity_footprint = user_footprints.get("energy", 0)
 
@@ -120,7 +130,7 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
             savings
         ))
 
-    # Suggest reducing gas usage if high
+    # Suggest reducing gas usage if it is high
     gas_usage = energy_data.get("gas_usage_cubic_meters", 0)
     gas_emission_factor = carbon_data["energy"]["gas"]
     gas_footprint = gas_usage * gas_emission_factor
@@ -131,7 +141,7 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
             savings
         ))
 
-    # Suggest upgrading appliances proportionally
+    # Suggest upgrading to efficient appliances
     if energy_data.get("energy_efficient_appliances", "") == "no":
         appliance_savings = electricity_footprint * 0.15 * 0.3  # 15% of usage saved by 30%
         recommendations.append((
@@ -139,12 +149,17 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
             appliance_savings
         ))
 
-    # Filter out empty or zero-saving recommendations
+
+    # ---------------------------------------
+    # Final Filtering & Ranking
+    # ---------------------------------------
+
+    # Remove any zero or negative saving recommendations
     recommendations = [(text, saving) for text, saving in recommendations if saving > 0]
 
-    # Sort by highest saving
+    # Sort recommendations by greatest CO2 savings
     recommendations.sort(key=lambda x: x[1], reverse=True)
 
-    # Return the sorted list 
+    # Return the most impactful recommendations
     return recommendations[:10]
 

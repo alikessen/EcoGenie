@@ -1,6 +1,9 @@
+# Import Flask modules and necessary libraries
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+
+# Import project modules
 from modules.diet_module import calculateDietFootprint
 from modules.energy_module import calculateEnergyFootprint
 from modules.transportation_module import calculateTransportFootprint
@@ -8,24 +11,26 @@ from modules.recommendation_module import generateLogicalRecommendations
 from modules.db import register_user, get_user_by_username, get_user_by_id, save_user_input, get_user_history
 
 
-# Flask App
-app = Flask(__name__, static_folder="static")  # Keep only one Flask instance
-app.secret_key = "secret_key"
+# Create Flask application instance
+app = Flask(__name__, static_folder="static")  
+app.secret_key = "secret_key" # Used for session management
 
-# Flask-Login & Bcrypt Setup
+# Setup bcrypt for password hashing
 bcrypt = Bcrypt(app)
+
+# Setup Flask Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"  # Redirects users to login page if not logged in
 
-# User Class
+# Define user class for Flask-Login
 class User(UserMixin):
     """User class for Flask-Login."""
     def __init__(self, id, username):
         self.id = id
         self.username = username
 
-
+# Load user session from user ID
 @login_manager.user_loader
 def load_user(user_id):
     user = get_user_by_id(user_id)  
@@ -33,7 +38,7 @@ def load_user(user_id):
         return User(user["id"], user["username"])
     return None
 
-# Home Page
+# Home page route
 @app.route('/')
 def index():
     if current_user.is_authenticated:
@@ -42,7 +47,7 @@ def index():
         print("Not logged in.")
     return render_template('index.html')
 
-# Register Route
+# Registration route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -80,7 +85,7 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
-# Diet Page
+# Diet form route
 @app.route('/diet', methods=['GET', 'POST'])
 @login_required
 def diet():
@@ -98,6 +103,8 @@ def diet():
 
     return render_template('diet.html')
 
+
+# Energy form route
 @app.route('/energy', methods=['GET', 'POST'])
 @login_required
 def energy():
@@ -118,6 +125,8 @@ def energy():
 
     return render_template('energy.html')
 
+
+# Transportation form route
 @app.route('/transportation', methods=['GET', 'POST'])
 @login_required
 def transportation():
@@ -130,7 +139,7 @@ def transportation():
             work_car_type = ""
             work_pt_type = ""
             
-            # Process work-related fields only if user is working
+            # Handle work travel inputs
             if working == "yes":
 
                 work_mode = request.form.get("work_mode", "")
@@ -141,7 +150,7 @@ def transportation():
                 work_distance_km = float(request.form.get("work_distance_km", 0))
                 work_days = int(request.form.get("work_days", 0))
 
-            # Safely process leisure inputs even if blank
+            # Handle leisure travel inputs
             try:
                 leisure_distance = float(request.form.get("leisure_distance") or 0)
             except ValueError:
@@ -174,7 +183,7 @@ def transportation():
     return render_template('transportation.html')
 
 
-# Recommendations
+# Recommendation display route
 @app.route('/recommendations')
 @login_required
 def recommendations():
@@ -187,6 +196,7 @@ def recommendations():
     if 'transportation' not in session:
         return redirect(url_for('transportation'))
 
+    # Calculate footprints
     diet_footprint = calculateDietFootprint(session['diet'])
     energy_footprint = calculateEnergyFootprint(session['energy'])
     transport_footprint = calculateTransportFootprint(session['transportation'])
@@ -197,6 +207,7 @@ def recommendations():
         "transportation": transport_footprint
     }
 
+     # Save data to database
     save_user_input(
         user_id=current_user.id,
         diet_data=session['diet'],
@@ -207,12 +218,15 @@ def recommendations():
         transport_footprint=transport_footprint
     )
 
+    # Generate recommendations
     recommendations = generateLogicalRecommendations(
         session['transportation'], session['diet'], session['energy'], user_footprints
     )
 
     return render_template('recommendation.html', recommendations=recommendations)
 
+
+# History display route
 @app.route('/history')
 @login_required
 def history():
@@ -221,6 +235,7 @@ def history():
     if not history_data:
         return render_template("history.html", history=[], best_record=None)
     
+    # Identify best record and calculate change
     min_total = min(e['diet_footprint'] + e['energy_footprint'] + e['transport_footprint'] for e in history_data)
 
     for i, entry in enumerate(history_data):
@@ -239,6 +254,6 @@ def history():
 
 
 
-# Run Flask App
+# Start the app
 if __name__ == '__main__':
     app.run(debug=True)

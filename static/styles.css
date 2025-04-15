@@ -1,3 +1,5 @@
+/* Body Style */
+/* Sets background color, font, removes margin, makes the layout full height, and centers content */
 body {
     background: #f4f7f9;
     font-family: 'Arial', sans-serif;
@@ -7,11 +9,12 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px; /* optional for spacing */
+    padding: 20px;
     box-sizing: border-box;
-    
 }
 
+/* Form Container */
+/* Adds white background, padding, rounded corners, shadow, and centers content inside a box */
 .form-container {
     background: rgba(255, 255, 255, 0.95);
     padding: 50px;
@@ -22,22 +25,28 @@ body {
     max-width: 400px;
 }
 
+/* Logo Styling */
+/* Adjusts logo size and centers it with rounded corners */
 .logo {
     width: 240px;
     height: auto;
     margin-bottom: 20px;
-    border-radius: 8px; /* Optional: smooth the corners */
+    border-radius: 8px;
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
 
+/* Heading Style */
+/* Sets spacing and dark text color for headings */
 h1 {
     margin-bottom: 25px;
     margin-top: 10px;
     color: #2c3e50;
 }
 
+/* Input Fields */
+/* Sets spacing, padding, border, and rounded edges for input boxes */
 input[type="text"], input[type="password"], input[type="email"] {
     width: 90%;
     padding: 12px;
@@ -47,6 +56,8 @@ input[type="text"], input[type="password"], input[type="email"] {
     box-sizing: border-box;
 }
 
+/* Button Style */
+/* Green background, white text, padding, rounded edges, and hover effect */
 button {
     background-color: #27ae60;
     color: white;
@@ -58,10 +69,14 @@ button {
     transition: background-color 0.3s;
 }
 
+/* Button Hover Effect */
+/* Slightly darker green when mouse hovers */
 button:hover {
     background-color: #219150;
 }
 
+/* Link Styling */
+/* Blue text with underline effect on hover */
 a {
     color: #2c3e50;
     text-decoration: none;
@@ -71,11 +86,13 @@ a:hover {
     text-decoration: underline;
 }
 
+/* Paragraph Spacing */
 p {
     margin-top: 15px;
 }
 
-/* Container for index.html */
+/* Index Container */
+/* Card layout for the home page intro */
 .index-container {
     background: rgba(255, 255, 255, 0.95);
     padding: 40px;
@@ -87,7 +104,7 @@ p {
     margin-top: 20px;
 }
 
-/* Buttons (shared for index, login, register) */
+/* Vertical Button Group for Index Page */
 .index-buttons {
     display: flex;
     flex-direction: column;
@@ -95,6 +112,7 @@ p {
     margin-top: 20px;
 }
 
+/* Shared Styling for Links and Buttons */
 .index-buttons a, 
 .index-buttons button {
     background-color: #27ae60;
@@ -112,7 +130,7 @@ p {
     background-color: #219150;
 }
 
-/* Logout link */
+/* Red Text Logout Link */
 .logout-link {
     margin-top: 20px;
     display: inline-block;
@@ -125,7 +143,7 @@ p {
     color: #c0392b;
 }
 
-/* History link */
+/* History Page Navigation */
 .history-link {
     margin-top: 10px;
     display: block;
@@ -136,6 +154,7 @@ p {
     text-decoration: underline;
 }
 
+/* General Button Group Layout */
 .button-group {
     display: flex;
     flex-direction: column;
@@ -143,6 +162,7 @@ p {
     margin-top: 20px;
 }
 
+/* Reusable Button Styling */
 .button {
     display: block;
     background-color: #27ae60;
@@ -153,10 +173,12 @@ p {
     transition: background-color 0.3s;
 }
 
+/* Hover Effect for Reusable Buttons */
 .button:hover {
     background-color: #219150;
 }
 
+/* Red Background Logout Button */
 .logout {
     background-color: #e74c3c;
 }
@@ -165,10 +187,7 @@ p {
     background-color: #c0392b;
 }
 
-
-
-
-
+/* Intro Section (used on welcome page) */
 .intro-section {
     background: rgba(255, 255, 255, 0.95);
     padding: 40px;
@@ -190,22 +209,7 @@ p {
     font-size: 16px;
 }
 
-.button-group {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.button {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
+/* Special Buttons for Intro Section */
 .button.green {
     background-color: #27ae60;
     color: white;
@@ -224,6 +228,7 @@ p {
     background-color: #2a80b9;
 }
 
+/* Diet Form Field Styling */
 .diet-form .form-group {
     margin-bottom: 15px;
     text-align: left;
@@ -242,12 +247,12 @@ p {
     border: 1px solid #ccc;
 }
 
-
-
+/* Recommendation Cards Container */
 .recommendations {
     margin-top: 20px;
 }
 
+/* Individual Recommendation Card */
 .recommendation-card {
     background: #e8f5e9;
     padding: 15px;
@@ -257,6 +262,7 @@ p {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
+/* Text Inside Recommendation Cards */
 .recommendation-card p {
     margin: 0;
     font-size: 16px;
@@ -269,8 +275,7 @@ p {
     font-weight: bold;
 }
 
-/* History Page */
-
+/* History Page Layout */
 .history-page {
     background: #f4f7f9;
     font-family: 'Arial', sans-serif;
@@ -279,13 +284,13 @@ p {
     box-sizing: border-box;
 }
 
-/* Always keep header visible */
+/* Title in History Page */
 .history-page h1 {
     margin: 0 auto 20px auto;
     text-align: center;
 }
 
-/* Center and contain the form properly */
+/* Centering Form Container on History Page */
 .history-page .form-container {
     display: flex;
     flex-direction: column;
@@ -294,7 +299,7 @@ p {
     box-sizing: border-box;
 }
 
-/* Cards */
+/* History Cards Layout */
 .history-container {
     display: flex;
     flex-wrap: wrap;
@@ -302,7 +307,7 @@ p {
     gap: 20px;
 }
 
-/* History Card */
+/* Each History Entry Card */
 .history-card {
     background: white;
     border-radius: 10px;
@@ -316,7 +321,7 @@ p {
     transform: translateY(-3px);
 }
 
-/* Best Record Style */
+/* Highlight Best Record */
 .best-record {
     border: 2px solid gold;
 }
@@ -336,19 +341,19 @@ p {
     font-weight: bold;
 }
 
-/* Text inside cards */
+/* Spacing in History Cards */
 .history-card p {
     margin: 5px 0;
 }
 
-/* Info Popup */
-
+/* Info Icon Wrapper */
 .info-wrapper {
     position: relative;
     display: inline-block;
     margin-left: 6px;
 }
 
+/* Green Info Icon Circle */
 .info-icon {
     display: inline-block;
     width: 18px;
@@ -363,6 +368,7 @@ p {
     font-weight: bold;
 }
 
+/* Tooltip Box for Info */
 .tooltip {
     display: none;
     position: absolute;
@@ -379,6 +385,7 @@ p {
     box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 
+/* Show Tooltip When Hovered */
 .info-wrapper:hover .tooltip {
     display: block;
 }

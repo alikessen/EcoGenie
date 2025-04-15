@@ -3,23 +3,27 @@
 <head>
     <title>Energy Consumption Information</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- JavaScript for dynamic behavior and validation -->
     <script>
+
+        // Adjust visibility of fields based on electricity and heating input
         function updateEnergyForm() {
             let heatingType = document.getElementById("heating_type").value;
             let electricityUsageInput = document.getElementById("electricity_kwh_per_month").value;
             let electricityUsage = parseFloat(electricityUsageInput);
 
-            // Hide other questions if electricity is exactly 0
+            // If electricity use is 0, hide all follow up questions
             if (electricityUsageInput !== "" && electricityUsage === 0) {
                 document.getElementById("other_energy_questions").style.display = "none";
             } else {
                 document.getElementById("other_energy_questions").style.display = "block";
             }
 
-            // Gas usage only if gas heating and electricity is not 0
+            // Show gas usage only when heating is gas and electricity is above 0
             document.getElementById("gas_usage_section").style.display = (heatingType === "gas" && electricityUsage !== 0) ? "block" : "none";
 
-            // Reset hidden inputs
+            // Reset other inputs when electricity is 0
             if (electricityUsageInput !== "" && electricityUsage === 0) {
                 document.getElementById("heating_type").value = "";
                 document.getElementById("gas_usage_cubic_meters").value = "";
@@ -28,6 +32,7 @@
             }
         }
 
+        // Validate energy inputs before submission
         function validateForm(event) {
             let errors = [];
             let firstInvalid = null;
@@ -38,12 +43,13 @@
             let gasUsage = parseFloat(document.getElementById("gas_usage_cubic_meters")?.value) || 0;
             let appliances = document.getElementById("energy_efficient_appliances").value;
 
-            // --- Electricity ---
+            // Check if electricity usage is valid
             if (isNaN(electricityUsage) || electricityUsage < 0) {
                 errors.push("Electricity usage cannot be negative or empty.");
                 firstInvalid = firstInvalid || document.getElementById("electricity_kwh_per_month");
             }
 
+            // If electricity used, validate dependent fields
             if (electricityUsage > 0) {
                 if (!electricitySource) {
                     errors.push("Please select your electricity source.");
@@ -63,7 +69,7 @@
                 }
             }
 
-            // --- Error Display ---
+            // Show error messages and prevent form submission
             let errorBox = document.getElementById("error_messages");
             errorBox.innerHTML = "";
             if (errors.length > 0) {
@@ -74,19 +80,26 @@
         }
     </script>
 </head>
+
+<!-- Run JavaScript update function once the page loads -->
 <body onload="updateEnergyForm()">
 
+    <!-- Page layout container -->
     <div class="form-container">
 
         <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
 
+        <!-- Page title and instruction text -->
         <h1>Energy Consumption</h1>
         <p>Please provide information about your household energy usage to help EcoGenie estimate your carbon footprint.</p>
 
+        <!-- Validation messages area -->
         <div id="error_messages" style="color: red;"></div>
 
+        <!-- Energy usage form -->
         <form method="POST" onsubmit="validateForm(event)" class="diet-form">
 
+            <!-- Electricity usage input with tooltip -->
             <div class="form-group">
                 <label>
                     Electricity Usage (kWh/month):
@@ -102,8 +115,10 @@
                 <input type="number" id="electricity_kwh_per_month" name="electricity_kwh_per_month" step="0.1" placeholder="e.g., 350" oninput="updateEnergyForm()">
             </div>
 
+            <!-- Additional energy questions shown only if electricity > 0 -->
             <div id="other_energy_questions">
 
+                <!-- Electricity source dropdown with tooltip -->
                 <div class="form-group">
                     <label>
                         Electricity Source:
@@ -127,6 +142,7 @@
                     </select>
                 </div>
 
+                <!-- Heating method dropdown -->
                 <div class="form-group">
                     <label>Heating Type:</label>
                     <select name="heating_type" id="heating_type" onchange="updateEnergyForm()">
@@ -138,11 +154,13 @@
                     </select>
                 </div>
 
+                <!-- Gas usage input shown only if heating uses gas -->
                 <div id="gas_usage_section" class="form-group" style="display: none;">
                     <label>Gas Usage (m³/month):</label>
                     <input type="number" id="gas_usage_cubic_meters" name="gas_usage_cubic_meters" step="0.1" placeholder="e.g., 50">
                 </div>
 
+                <!-- Energy efficient appliances dropdown -->
                 <div class="form-group">
                     <label>Energy-Efficient Appliances:</label>
                     <select name="energy_efficient_appliances" id="energy_efficient_appliances">
@@ -155,6 +173,7 @@
 
             </div>
 
+            <!-- Submit button -->
             <button type="submit">Next</button>
         </form>
     </div>

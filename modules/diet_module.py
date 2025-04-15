@@ -126,8 +126,9 @@ def getDietData():
             "eggs_per_week": eggs_per_week,
         }
         """
+
+#Calculates the weekly carbon footprint of a user's diet using emission factors
 def calculateDietFootprint(diet_data):
-    """Calculates the diet-related carbon footprint using values from CSV."""
     try:
         footprint = 0.0
         footprint += diet_data["beef_per_kg"] * carbon_data["diet"]["beef"]
@@ -142,7 +143,7 @@ def calculateDietFootprint(diet_data):
         raise ValueError(f"Missing CO₂ data for: {e}")
 
 
-# Debugging: Run a test case when executing this script directly
+# Run a test case when executing this script directly
 if __name__ == "__main__":
     sample_diet = {
         "beef_per_kg": 2.0,

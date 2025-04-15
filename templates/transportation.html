@@ -2,21 +2,27 @@
 <html>
 
 <head>
+    <!-- Set page title and link stylesheet -->
     <title>Transportation Information</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- Inline styling for smooth transitions on dynamic sections -->
     <style>
         #work_travel_section, #car_options, #public_transport_options, #leisure_travel_section, #leisure_type_section {
             transition: all 0.3s ease;
         }
     </style>
+
+    <!-- JavaScript for dynamic form updates and validation -->
     <script>
+        // Adjust visibility of travel sections based on user inputs
         function updateTransportForm() {
             let working = document.getElementById("working").value;
             let transportMode = document.getElementById("work_mode").value;
             let leisureDays = parseInt(document.getElementById("leisure_days").value) || 0;
             let leisureMode = document.getElementById("leisure_mode").value;
 
-            // Work Section
+            // Toggle work section visibility
             document.getElementById("work_travel_section").style.display = (working === "yes") ? "block" : "none";
             if (working !== "yes") {
                 document.getElementById("work_distance_km").value = "";
@@ -26,10 +32,11 @@
                 document.getElementById("work_car_type").value = "";
             }
 
+            // Show specific fields for transport types
             document.getElementById("car_options").style.display = (transportMode === "car") ? "block" : "none";
             document.getElementById("public_transport_options").style.display = (transportMode === "public transport") ? "block" : "none";
 
-            // Leisure Section
+            // Toggle leisure section
             document.getElementById("leisure_travel_section").style.display = (leisureDays > 0) ? "block" : "none";
 
             if (leisureDays === 0) {
@@ -39,7 +46,7 @@
                 document.getElementById("leisure_type_section").style.display = "none";
             }
 
-            // Leisure Type
+            // Handle leisure transport type dynamically
             let leisureTypeSection = document.getElementById("leisure_type_section");
             let leisureTypeSelect = document.getElementById("leisure_type");
             leisureTypeSelect.innerHTML = "";
@@ -63,6 +70,8 @@
             }
         }
 
+
+        // Validate the form before submitting
         function validateForm(event) {
             let errors = [];
             let firstInvalid = null;
@@ -76,7 +85,7 @@
             let leisureMode = document.getElementById("leisure_mode").value;
             let leisureType = document.getElementById("leisure_type").value;
 
-            // Work Validations
+            // Validate work inputs
             if (!working) {
                 errors.push("Please select if you are working.");
                 firstInvalid = firstInvalid || document.getElementById("working");
@@ -96,7 +105,7 @@
                 }
             }
 
-            // Leisure Validations
+            // Validate leisure inputs
             if (leisureDays > 0) {
                 if (leisureDistance <= 0) {
                     errors.push("Leisure travel distance must be greater than 0 if you travel for leisure.");
@@ -112,7 +121,7 @@
                 }
             }
 
-            // Display Errors
+            // Show errors and prevent submission
             let errorBox = document.getElementById("error_messages");
             errorBox.innerHTML = "";
             if (errors.length > 0) {
@@ -126,17 +135,21 @@
 
 <body onload="updateTransportForm()">
 
+    <!-- Main content container -->
     <div class="form-container">
 
         <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
 
+        <!-- Page heading -->
         <h1>Transportation Information</h1>
         <p>Tell us about your daily travel routines to help EcoGenie estimate your transportation footprint.</p>
 
+        <!-- Error message section -->
         <div id="error_messages" style="color: red;"></div>
 
         <form method="POST" onsubmit="validateForm(event)" class="diet-form">
 
+            <!-- Work travel section -->
             <h2>Work Travel</h2>
 
             <div class="form-group">
@@ -170,6 +183,8 @@
                     </select>
                 </div>
 
+
+                <!-- Car type input shown only if selected -->
                 <div id="car_options" class="form-group" style="display:none;">
                     <label>Car Type:</label>
                     <select name="work_car_type" id="work_car_type">
@@ -179,6 +194,7 @@
                     </select>
                 </div>
 
+                <!-- Public transport type shown if selected -->
                 <div id="public_transport_options" class="form-group" style="display:none;">
                     <label>Public Transport Type:</label>
                     <select name="work_pt_type" id="work_pt_type">
@@ -189,6 +205,7 @@
                 </div>
             </div>
 
+            <!-- Leisure travel section -->
             <h2>Leisure Travel</h2>
 
             <div class="form-group">
@@ -221,6 +238,7 @@
 
             </div>
 
+            <!-- Submit form -->
             <button type="submit">Next</button>
         </form>
     </div>

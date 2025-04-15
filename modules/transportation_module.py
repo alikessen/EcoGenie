@@ -1,11 +1,11 @@
 from modules.carbon_data import carbon_data
 
 def calculateTransportFootprint(transport_data):
-    """Calculates the transport-related carbon footprint using values from CSV."""
+    """Calculates the transport-related carbon footprint using values from CSV."""  
     try:
         footprint = 0.0
 
-        # Work-related emissions
+        # Work related emissions
         work_distance_km = transport_data.get("work_distance_km", 0)
         work_days = transport_data.get("work_days", 0)
         work_mode = transport_data.get("work_mode", "")
@@ -18,9 +18,9 @@ def calculateTransportFootprint(transport_data):
         elif work_mode == "public transport":
             footprint += total_work_distance * carbon_data["transport"][work_pt_type]
         elif work_mode in ["walk", "cycle"]:
-            footprint += 0.0  # Zero-emission transport
+            footprint += 0.0  # Zero emission transport
 
-        # Leisure-related emissions
+        # Leisure related emissions
         leisure_distance = transport_data.get("leisure_distance", 0)
         leisure_days = transport_data.get("leisure_days", 0)
         leisure_mode = transport_data.get("leisure_mode", "")
@@ -32,16 +32,15 @@ def calculateTransportFootprint(transport_data):
         elif leisure_mode == "public transport":
             footprint += total_leisure_distance * carbon_data["transport"][leisure_type]
         elif leisure_mode in ["walk", "cycle"]:
-            footprint += 0.0  # Zero-emission leisure transport
+            footprint += 0.0  # Zero emission leisure transport
 
         return footprint
 
     except KeyError as e:
-        raise ValueError(f"Missing CO₂ data for: {e}")
+        raise ValueError(f"Missing CO2 data for: {e}")
 
 
 def getTransportData():
-    """CLI-based collection of transportation input (for testing only)."""
     try:
         print("Transportation Details:\n")
 

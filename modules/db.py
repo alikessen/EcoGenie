@@ -5,6 +5,8 @@ import json
 
 bcrypt = Bcrypt()
 
+# Database Connection
+
 def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
@@ -13,8 +15,10 @@ def get_db_connection():
         database="EcoGenieDB"
     )
 
+
+# Registers a new user with a hashed password
 def register_user(username, email, password):
-    """Registers a new user with a hashed password."""
+    
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -34,8 +38,10 @@ def register_user(username, email, password):
         cursor.close()
         conn.close()
 
+
+# Fetch user details by username
 def get_user_by_username(username):
-    """Fetch user details by username."""
+    
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -46,6 +52,8 @@ def get_user_by_username(username):
     conn.close()
     return user
 
+
+# Fetch user details by id
 def get_user_by_id(user_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -58,6 +66,7 @@ def get_user_by_id(user_id):
     return user
 
 
+# Save user input
 def save_user_input(user_id, diet_data, energy_data, transport_data,
                     diet_footprint, energy_footprint, transport_footprint):
     conn = get_db_connection()
@@ -86,6 +95,7 @@ def save_user_input(user_id, diet_data, energy_data, transport_data,
         conn.close()
 
 
+# Get User History
 def get_user_history(user_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
