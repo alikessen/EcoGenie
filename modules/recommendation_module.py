@@ -14,8 +14,7 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
     work_days = transportation_data.get("work_days", 0)
     work_car_type = transportation_data.get("work_car_type", "")
     work_pt_type = transportation_data.get("work_public_transport_type", "")
-    transport_footprint = user_footprints.get("transportation", 0)
-    total_distance_work = work_days * distance_to_work * 2
+    total_distance_work = work_days * distance_to_work * 2 # Round trip
 
     if mode_of_transport == "car":
         emission_factor = carbon_data["transport"][f"car_{work_car_type}"]
@@ -118,17 +117,13 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
 
     # Suggest switching to renewable electricity
     if electricity_source == "no":
-        recommendations.append((
-            "Switch to a renewable energy provider to eliminate electricity emissions.", 
-            electricity_footprint
+        recommendations.append(("Switch to a renewable energy provider to eliminate electricity emissions.", electricity_footprint
         ))
 
     elif electricity_source == "some":
         savings = electricity_footprint * 0.5
         recommendations.append((
-            "Switch to a fully renewable energy provider to cut electricity emissions by 50%.", 
-            savings
-        ))
+            "Switch to a fully renewable energy provider to cut electricity emissions by 50%.", savings))
 
     # Suggest reducing gas usage if it is high
     gas_usage = energy_data.get("gas_usage_cubic_meters", 0)
@@ -136,18 +131,12 @@ def generateLogicalRecommendations(transportation_data, diet_data, energy_data, 
     gas_footprint = gas_usage * gas_emission_factor
     if gas_usage > 50:
         savings = gas_footprint * 0.1  
-        recommendations.append((
-            "Reduce gas heating usage by 10%.", 
-            savings
-        ))
+        recommendations.append(("Reduce gas heating usage by 10%.", savings))
 
     # Suggest upgrading to efficient appliances
     if energy_data.get("energy_efficient_appliances", "") == "no":
         appliance_savings = electricity_footprint * 0.15 * 0.3  # 15% of usage saved by 30%
-        recommendations.append((
-            "Upgrade to energy-efficient appliances or install LED bulbs.", 
-            appliance_savings
-        ))
+        recommendations.append(("Upgrade to energy-efficient appliances or install LED bulbs.", appliance_savings))
 
 
     # ---------------------------------------

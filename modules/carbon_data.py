@@ -1,7 +1,7 @@
 import csv
 import os
 
- #Load CO2 emission data from CSV and return it as a dictionary.
+ #Load CO2 emission data from CSV and return it as a dictionary
 def load_carbon_data():
    
     carbon_data = {}
