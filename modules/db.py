@@ -1,72 +1,78 @@
+import json
+import os
+
 import mysql.connector
 from flask_bcrypt import Bcrypt
-import json
 
 
 bcrypt = Bcrypt()
 
+
 def get_db_connection():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",  
-        password="",
-        database="EcoGenieDB"
+        host=os.getenv("DB_HOST", "localhost"),
+        port=int(os.getenv("DB_PORT", "3306")),
+        user=os.getenv("DB_USER", "ecogenie_app"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "EcoGenieDB"),
     )
 
+
 def register_user(username, email, password):
-    """Registers a new user with a hashed password."""
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # Hash the password before storing
     hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
 
     try:
         cursor.execute(
             "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)",
-            (username, email, hashed_password)
+            (username, email, hashed_password),
         )
         conn.commit()
         return True
     except mysql.connector.IntegrityError:
-        return False  # Username or email already exists
+        return False
     finally:
         cursor.close()
         conn.close()
 
+
 def get_user_by_username(username):
-    """Fetch user details by username."""
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-
     cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
     user = cursor.fetchone()
-
     cursor.close()
     conn.close()
     return user
+
 
 def get_user_by_id(user_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-
     cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
-
     cursor.close()
     conn.close()
     return user
 
 
-def save_user_input(user_id, diet_data, energy_data, transport_data,
-                    diet_footprint, energy_footprint, transport_footprint):
+def save_user_input(
+    user_id,
+    diet_data,
+    energy_data,
+    transport_data,
+    diet_footprint,
+    energy_footprint,
+    transport_footprint,
+):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
         cursor.execute(
             """
-            INSERT INTO user_inputs 
-            (user_id, diet_data, energy_data, transport_data, 
+            INSERT INTO user_inputs
+            (user_id, diet_data, energy_data, transport_data,
              diet_footprint, energy_footprint, transport_footprint)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
             """,
@@ -77,8 +83,8 @@ def save_user_input(user_id, diet_data, energy_data, transport_data,
                 json.dumps(transport_data),
                 diet_footprint,
                 energy_footprint,
-                transport_footprint
-            )
+                transport_footprint,
+            ),
         )
         conn.commit()
     finally:
@@ -98,10 +104,9 @@ def get_user_history(user_id):
             WHERE user_id = %s
             ORDER BY timestamp DESC
             """,
-            (user_id,)
+            (user_id,),
         )
-        results = cursor.fetchall()
-        return results
+        return cursor.fetchall()
     finally:
         cursor.close()
         conn.close()
