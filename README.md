@@ -1,43 +1,61 @@
-# EcoGenie: AI-Powered Sustainability Assistant
+# EcoGenie
 
-**EcoGenie** is a web-based AI assistant that helps individuals reduce their carbon footprint through explainable, personalised recommendations. The system evaluates lifestyle habits in three key areas—**diet**, **energy use**, and **transportation**—and offers realistic, high-impact suggestions using rule-based AI.
+EcoGenie is a Flask web app that estimates a user's carbon footprint (diet, energy, transportation) and shows practical reduction recommendations.
 
-Developed as a final year Computer Science project, EcoGenie focuses on transparency, accessibility, and behaviour change for sustainability.
+## Setup
 
----
-
-## Features
-
-- **Carbon Footprint Estimation**  
-  Calculates weekly emissions using activity-based models and real-world emission factors.
-
-- **Rule-Based Recommendation Engine**  
-  Provides the top three most impactful suggestions using symbolic AI and threshold logic.
-
-- **User History Tracking**  
-  Allows registered users to monitor their progress over time.
-
-- **Responsive Frontend**  
-  Built with HTML, CSS, and JavaScript for smooth interaction across devices.
-
-- **Secure Authentication**  
-  Login and registration features using bcrypt password hashing.
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Python 3.10+
-- Flask
-- Flask-Login
-- Flask-Bcrypt
-
-### Installation
-
-Clone the repository:
+1. Create and activate a virtual environment:
 
 ```bash
-git clone https://github.com/yourusername/EcoGenie.git
-cd EcoGenie
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+2. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+3. Copy and configure environment variables:
+
+```bash
+cp .env.example .env
+```
+
+`app.py` loads `.env` automatically for local development.
+
+## Environment Variables
+
+- `FLASK_SECRET_KEY`: Flask session secret key.
+- `FLASK_DEBUG`: `1` for debug mode, `0` for production-like local runs.
+- `DB_HOST`: MySQL host.
+- `DB_PORT`: MySQL port.
+- `DB_USER`: MySQL username.
+- `DB_PASSWORD`: MySQL password.
+- `DB_NAME`: MySQL database name.
+
+## Run
+
+```bash
+python app.py
+```
+
+App runs at `http://127.0.0.1:5000`.
+
+## Test
+
+```bash
+pytest -q
+```
+
+## Architecture Summary
+
+- `app.py`: Flask routes, auth flow, session orchestration.
+- `modules/form_parsers.py`: form parsing + normalization + validation.
+- `modules/*_module.py`: footprint and recommendation logic.
+- `modules/db.py`: MySQL access functions.
+- `templates/`: Jinja templates.
+- `data/carbon_data.csv`: emission factors.
+
+

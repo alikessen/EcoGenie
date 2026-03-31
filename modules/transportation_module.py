@@ -1,11 +1,10 @@
 from modules.carbon_data import carbon_data
 
-def calculateTransportFootprint(transport_data):
-    """Calculates the transport-related carbon footprint using values from CSV."""  
+
+def calculate_transport_footprint(transport_data):
     try:
         footprint = 0.0
 
-        # Work related emissions
         work_distance_km = transport_data.get("work_distance_km", 0)
         work_days = transport_data.get("work_days", 0)
         work_mode = transport_data.get("work_mode", "")
@@ -31,36 +30,30 @@ def calculateTransportFootprint(transport_data):
             footprint += total_leisure_distance * carbon_data["transport"][f"car_{leisure_type}"]
         elif leisure_mode == "public transport":
             footprint += total_leisure_distance * carbon_data["transport"][leisure_type]
-        elif leisure_mode in ["walk", "cycle"]:
-            footprint += 0.0  # Zero emission leisure transport
 
         return footprint
+    except KeyError as exc:
+        raise ValueError(f"Missing CO2 data for: {exc}")
 
-    except KeyError as e:
-        raise ValueError(f"Missing CO2 data for: {e}")
+
+# Backward-compatible alias.
+def calculateTransportFootprint(transport_data):
+    return calculate_transport_footprint(transport_data)
 
 
-def getTransportData():
-    try:
-        print("Transportation Details:\n")
-
-        data = {
-            "work_distance_km": 10,
-            "work_days": 5,
-            "work_mode": "car",
-            "work_type": "petrol",
-            "leisure_distance": 8,
-            "leisure_days": 2,
-            "leisure_mode": "public transport",
-            "leisure_type": "bus"
-        }
-
-        return data
-
-    except Exception as e:
-        raise ValueError(f"Input error: {e}")
+def get_transport_data():
+    return {
+        "work_distance_km": 10,
+        "work_days": 5,
+        "work_mode": "car",
+        "work_car_type": "petrol",
+        "leisure_distance": 8,
+        "leisure_days": 2,
+        "leisure_mode": "public transport",
+        "leisure_type": "bus",
+    }
 
 
 if __name__ == "__main__":
-    sample_data = getTransportData()
-    print("Transport Carbon Footprint:", calculateTransportFootprint(sample_data))
+    sample_data = get_transport_data()
+    print("Transport Carbon Footprint:", calculate_transport_footprint(sample_data))

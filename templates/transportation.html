@@ -146,6 +146,9 @@
 
         <!-- Error message section -->
         <div id="error_messages" style="color: red;"></div>
+        {% if error %}
+            <p style="color: red; font-weight: bold;">{{ error }}</p>
+        {% endif %}
 
         <form method="POST" onsubmit="validateForm(event)" class="diet-form">
 
