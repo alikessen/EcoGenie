@@ -18,7 +18,9 @@ def get_db_connection():
     )
 
 
+# Registers a new user with a hashed password
 def register_user(username, email, password):
+    
     conn = get_db_connection()
     cursor = conn.cursor()
     hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
@@ -37,7 +39,9 @@ def register_user(username, email, password):
         conn.close()
 
 
+# Fetch user details by username
 def get_user_by_username(username):
+    
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
@@ -47,6 +51,7 @@ def get_user_by_username(username):
     return user
 
 
+# Fetch user details by id
 def get_user_by_id(user_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -92,6 +97,7 @@ def save_user_input(
         conn.close()
 
 
+# Get User History
 def get_user_history(user_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)

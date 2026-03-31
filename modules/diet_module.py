@@ -1,7 +1,7 @@
 from modules.carbon_data import carbon_data
 
-
-def calculate_diet_footprint(diet_data):
+#Calculates the weekly carbon footprint of a user's diet using emission factors
+def calculateDietFootprint(diet_data):
     try:
         footprint = 0.0
         footprint += diet_data["beef_per_kg"] * carbon_data["diet"]["beef"]

@@ -7,22 +7,37 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
+
 <body class="history-page">
+
+    <!-- Main content container -->
     <div class="form-container">
 
         <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
         <h1>My Carbon Footprint History</h1>
 
+        <!-- Check if there is any historical data -->
         {% if history %}
+
+            <!-- Container to hold all history cards -->
             <div class="history-container">
+
+                <!-- Loop through each historical entry -->
                 {% for entry in history %}
+
+                    <!-- Individual history card with optional highlight if it's the best -->
                     <div class="history-card {% if entry.is_best %}best-record{% endif %}">
+
+                        <!-- Display timestamp -->
                         <p><strong>Date:</strong> {{ entry.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+
+                        <!-- Display CO2 breakdown by category -->
                         <p><strong>Diet CO₂:</strong> {{ entry.diet_footprint }} kg</p>
                         <p><strong>Energy CO₂:</strong> {{ entry.energy_footprint }} kg</p>
                         <p><strong>Transport CO₂:</strong> {{ entry.transport_footprint }} kg</p>
                         <p><strong>Total CO₂:</strong> {{ entry.total_footprint }} kg</p>
 
+                        <!-- Conditional messages based on comparison to previous record -->
                         {% if entry.is_best %}
                             <p class="best-text">🏆 This is your best record!</p>
                         {% elif entry.change > 0 %}
@@ -35,10 +50,13 @@
                     </div>
                 {% endfor %}
             </div>
+
+        <!-- Fallback message when no history exists -->
         {% else %}
             <p>You have no history yet. Start by entering your lifestyle data.</p>
         {% endif %}
 
+        <!-- Link to return to the home page -->
         <a href="{{ url_for('index') }}" class="button">Back to Home</a>
     </div>
 </body>

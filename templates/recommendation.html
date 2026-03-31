@@ -11,18 +11,28 @@
     <div class="form-container">
         <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
 
+        <!-- Page title and introductory message -->
         <h1>Your Personalized Recommendations</h1>
         <p>Here are your top suggestions to reduce your carbon footprint:</p>
 
+        <!-- If there are recommendations to show -->
         {% if recommendations %}
             <div class="recommendations">
+
+                <!-- Loop through each recommendation and its associated savings -->
                 {% for rec, savings in recommendations %}
                     <div class="recommendation-card">
+
+                        <!-- Display recommendation text -->
                         <p>{{ rec }}</p>
+
+                        <!-- Display estimated CO2 savings -->
                         <span class="co2-saving">CO₂ Savings: {{ savings | round(2) }} kg/week</span>
                     </div>
                 {% endfor %}
             </div>
+
+        <!-- If no new recommendations are available -->
         {% else %}
             <div class="recommendation-card" style="background-color: #e8f5e9;">
                 <p style="color: green; font-weight: bold;">
@@ -31,6 +41,7 @@
             </div>
         {% endif %}
 
+        <!-- Button link to return to home page -->
         <a href="{{ url_for('index') }}" class="button">Go Back to Home</a>
     </div>
 </body>

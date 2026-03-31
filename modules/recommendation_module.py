@@ -1,9 +1,14 @@
 from modules.carbon_data import carbon_data
 
-
-def generate_logical_recommendations(transportation_data, diet_data, energy_data, user_footprints):
+# Generates personalized sustainability recommendations based on a user's lifestyle data in transportation, diet, and energy use.
+def generateLogicalRecommendations(transportation_data, diet_data, energy_data, user_footprints):
     recommendations = []
 
+    # ---------------------------------------
+    # Transportation Recommendations
+    # ---------------------------------------
+
+    # Transport: Work travel
     mode_of_transport = transportation_data.get("work_mode", "")
     distance_to_work = transportation_data.get("work_distance_km", 0)
     work_days = transportation_data.get("work_days", 0)
@@ -35,7 +40,7 @@ def generate_logical_recommendations(transportation_data, diet_data, energy_data
     leisure_distance = transportation_data.get("leisure_distance", 0)
     leisure_days = transportation_data.get("leisure_days", 0)
     leisure_type = transportation_data.get("leisure_type", "")
-    total_distance_leisure = leisure_days * leisure_distance * 2
+    total_distance_leisure = leisure_days * leisure_distance * 2 # Round trip
 
     if leisure_mode == "car":
         leisure_emission_factor = carbon_data["transport"].get(f"car_{leisure_type}", 0)
@@ -50,22 +55,27 @@ def generate_logical_recommendations(transportation_data, diet_data, energy_data
             ("Use the tube instead of the bus for lower emissions during leisure trips.", savings)
         )
 
-    if diet_data.get("beef_per_kg", 0) > 1:
+
+    # ---------------------------------------
+    # Diet Recommendations
+    # ---------------------------------------
+
+    if diet_data.get("beef_per_kg", 0) > 0.5:
         beef_emission = carbon_data["diet"]["beef"]
         beef_savings = (diet_data["beef_per_kg"] * 0.5) * beef_emission
         recommendations.append(("Reduce your beef consumption by 50% per week.", beef_savings))
 
-    if diet_data.get("chicken_per_kg", 0) > 1:
+    if diet_data.get("chicken_per_kg", 0) > 0.2:
         chicken_emission = carbon_data["diet"]["chicken"]
         chicken_savings = (diet_data["chicken_per_kg"] * 0.5) * chicken_emission
         recommendations.append(("Reduce your chicken consumption by 50% per week.", chicken_savings))
 
-    if diet_data.get("fish_per_kg", 0) > 1:
+    if diet_data.get("fish_per_kg", 0) > 0.1:
         fish_emission = carbon_data["diet"]["fish"]
         fish_savings = (diet_data["fish_per_kg"] * 0.5) * fish_emission
         recommendations.append(("Reduce your fish consumption by 50% per week.", fish_savings))
 
-    if diet_data.get("milk_liters_per_week", 0) > 2:
+    if diet_data.get("milk_liters_per_week", 0) > 0.5:
         milk_emission = carbon_data["diet"]["milk"]
         milk_savings = (diet_data["milk_liters_per_week"] * 0.5) * milk_emission
         recommendations.append(("Reduce your milk consumption by 50% per week.", milk_savings))

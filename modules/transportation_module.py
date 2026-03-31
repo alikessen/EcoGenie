@@ -16,7 +16,10 @@ def calculate_transport_footprint(transport_data):
             footprint += total_work_distance * carbon_data["transport"][f"car_{work_car_type}"]
         elif work_mode == "public transport":
             footprint += total_work_distance * carbon_data["transport"][work_pt_type]
+        elif work_mode in ["walk", "cycle"]:
+            footprint += 0.0  # Zero emission transport
 
+        # Leisure related emissions
         leisure_distance = transport_data.get("leisure_distance", 0)
         leisure_days = transport_data.get("leisure_days", 0)
         leisure_mode = transport_data.get("leisure_mode", "")

@@ -8,13 +8,25 @@
 <body>
     <div class="form-container">
         <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
+
+        <!-- Heading for the registration form -->
         <h1>Create your EcoGenie Account</h1>
         <form method="POST">
+
+            <!-- Username input field -->
             <input type="text" name="username" placeholder="Username" required>
+
+            <!-- Email input field -->
             <input type="email" name="email" placeholder="Email" required>
+
+            <!-- Password input field -->
             <input type="password" name="password" placeholder="Password" required>
+
+            <!-- Submit button to create account -->
             <button type="submit">Register</button>
         </form>
+
+        <!-- Link to login page for users who already have an account -->
         <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
     </div>
 </body>

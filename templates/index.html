@@ -8,24 +8,32 @@
 </head>
 
 <body>
+    <!-- Main centered container for the home page -->
     <div class="form-container">
 
         <img src="{{ url_for('static', filename='logo(1).png') }}" alt="EcoGenie Logo" class="logo">
 
+        <!-- If the user is logged in -->
         {% if current_user.is_authenticated %}
-            <!-- Authenticated View -->
+
+            <!-- Welcome message for authenticated user -->
             <h1>Welcome back, {{ current_user.username }}!</h1>
+
+            <!-- Navigation buttons for logged in users -->
             <div class="button-group">
                 <a href="{{ url_for('diet') }}" class="button">Start</a>
                 <a href="{{ url_for('history') }}" class="button">View History</a>
                 <a href="{{ url_for('logout') }}" class="button logout">Logout</a>
             </div>
         
+        <!-- If the user is not logged in -->
         {% else %}
-            <!-- Guest View -->
+            <!-- Introduction for guest users -->
             <h1>Welcome to EcoGenie</h1>
             <p>EcoGenie is your personal sustainability assistant.</p>
             <p>Discover tailored recommendations to reduce your carbon footprint and live greener.</p>
+
+            <!-- Call-to-action buttons for registration and login -->
             <div class="button-group">
                 <a href="{{ url_for('register') }}" class="button green">Register</a>
                 <a href="{{ url_for('login') }}" class="button blue">Login</a>
